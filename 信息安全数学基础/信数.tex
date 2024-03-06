@@ -1,0 +1,1777 @@
+\documentclass[cn,10pt]{elegantbook}
+\title{信息安全数学基础}
+\subtitle{密码学基础和数论基础}
+
+\author{熊睿 \& Stander-by}
+\institute{HUST-CSE-2004}
+\date{Mar 7, 2022}
+\version{1.0}
+
+
+\extrainfo{学习新思想，争做新青年。}
+
+\setcounter{tocdepth}{3}
+
+\logo{cse.jpg}
+\cover{cover.jpg}
+
+% 本文档命令
+\usepackage{array}
+\usepackage{ulem}
+\usepackage{xcolor}
+\newcommand{\ccr}[1]{\makecell{{\color{#1}\rule{1cm}{1cm}}}}
+
+\definecolor{customcolor}{RGB}{32,178,170}
+\colorlet{coverlinecolor}{customcolor}
+
+\begin{document}
+
+\maketitle
+\frontmatter
+
+\chapter*{特别声明}
+
+\markboth{Introduction}{前言}
+
+该笔记是于2022年3月7日开始，针对华中科技大学网络空间安全学院2020级信息安全数学基础课程编制的笔记，该课程使用的是HUST-CSE汤学明老师所著的《信息安全数学基础》，还有中国科学院大学的陈恭亮老师所编著的《信息安全数学基础》，陈恭亮老师也是汤老师在WHU读研的导师。学有余力时，还应去翻阅华罗庚的著作《数论引导》。
+
+该课程所运用的主要编程环境是开源的SageMath，同时根据需要可以使用python和mathematical等。
+
+SageMath-GitHub 网址：\href{https://github.com/sagemath/}{https://github.com/sagemath/}
+
+该课程前有《离散数学》打基础，后为《密码学原理》铺路，是理论实践之间的桥梁，理解抽象知识，提高解决实际数学、密码学问题的能力。
+
+同时使用优美的\LaTeX{}来书写，也少不了WHU好友的鼎力推荐(Thanks)，也希望能通过这次机会，去熟悉\LaTeX{}的语法，特别是数学公式的编写，和作图能力。
+
+\vskip 0.5cm
+
+另外，“多分享，多奉献”，之后我会将文档同步于我的Github账号，由于编者的水平有限，会存在一些难免的疏漏和问题，请大家批评指正！
+
+\vskip 0.5cm
+
+我的GitHub 网址：\href{https://github.com/Stander-by/}{https://github.com/Stander-by/}
+
+我的邮件：\email{xiongruistanderby@gmail.com}
+
+NodeBB校内网: \href{http://10.12.162.1:5881/}{http://10.12.162.1:5881/}
+
+NodeBB校外网: \href{http://124.71.166.97:5881/}{http://124.71.166.97:5881/}
+
+SageMath:\href{http://10.12.162.1:5883/}{http://10.12.162.1:5883/}
+\vskip 1.5cm
+
+\begin{flushright}
+Stander-by\\
+Mar 7, 2022
+\end{flushright}
+
+\tableofcontents
+
+\mainmatter
+
+\chapter{整除}
+第一章讲述整数整除中带余除法、因子、最大公因数、最小公倍数和算术基本定理等基本概念，希望通过从带余除法到最终的算术基本定理的推导过程，掌握整数研究的一般方法，在第三章多项式的唯一因式分解定理的推到过程中，用到这种系统化的方法。
+\section{整除性}
+
+\begin{theorem}[带余除法]\label{thm1.1}
+  任意给定整数a和整数b>0，存在唯一的一对整数q，$0 \leq r \textless b$，使得：$a = qb + r$。
+\end{theorem}
+
+\begin{corollary}
+  任意给定整数a和整数b<0，存在唯一的一对整数q，$0\leq r < \left| b \right| $，使得：$a = qb + r$。
+\end{corollary}
+
+\begin{corollary}
+任意给定整数a，c和整数b$\ne$0，存在唯一的一对整数q，$c\leq r < \left| b \right| + c$，使得$a = qb + r$。
+\end{corollary}
+
+\begin{theorem}[整除性质]\label{thm1.2}
+设a，b，c为整数
+\begin{enumerate}[(1)]
+\item 若$a \mid b $，$ b \mid a $，则$ a = \pm b $;
+\item 设整数$k \neq 0$，若$a\mid b$，则$\pm ka \mid \pm kb$，反之亦然；
+\item 对任意整数k，若$a\mid b $，则$a \mid kb$；
+\item 若$a \mid b$，$b \neq 0$，则$\frac{b}{a} \mid b$；
+\item 若$a \mid b$，$b \mid c$，则$a \mid c$；
+\item 若$a \mid b$，$a \mid c$，则对任意整数s和t，$a \mid sb+ tc$；  
+\end{enumerate} 
+\end{theorem}
+
+\begin{example}
+  若a是整数，证明$a^3-a$是6的倍数。
+\end{example}
+
+\begin{proof}
+\\$a^3-a=(a-1)a(a+1)$
+\\由定理 \ref{thm1.2}之(3)有，$3 \mid (a-1)a(a+1)$，可设$(a-1)a(a+1) = 3q$。
+\\同理，因为两个连续的整数中一定有一个是2的倍数，所以$2 \mid (a-1)a(a+1)$，不妨设$q = 2t$，于是$(a-1)a(a+1)= 6t$，根据整除的定义，$6 \mid (a-1)a(a+1)$。
+\end{proof}
+
+\begin{example}
+  若x，y为整数，证明：$10 \mid 2x+5y \Leftrightarrow 10 \mid 4x+5y$。
+\end{example}
+\begin{proof}
+\\由定理 \ref{thm1.2}之(4)有
+\\$4x+5y = 10(x+2y)-3(2x+5y)$
+\\$2x+5y = 3(4x+5y)-10(x+y)$
+\end{proof}
+\begin{exercise}
+  \begin{enumerate}[1)]
+    \item 是否存在n，使得$n+1 \mid n!$？
+    \item 如果$n \mid x^2 -y^2$，那么$n \mid x+y$或者$n \mid x-y$是否成立？
+  \end{enumerate}
+\end{exercise}
+\begin{note}
+
+\end{note}
+
+\section{欧几里得辗转相除法}
+\begin{definition}
+  $(a,b) \ gcd(a,b)$表示为a和b的最大公因数。
+\end{definition}
+\begin{theorem}
+  设a，b是两个不全为0的整数，且$a = qb+r $，r为整数，则$(a,b) = (b,r)$。\\
+\end{theorem}
+
+\begin{proof}
+  \\设$d = (a,b) \ d^{\prime} = (b,r)$
+  \\由定理 \ref{thm1.2} (6)得，$d \mid (a-qb)$即$d \mid r$
+  \\且$d \leq d^{\prime}$，所以$d = d^{\prime}$。
+\end{proof}
+
+\begin{corollary}
+  设a，b是两个不全为0的整数，q为整数，则$(a,b)=(a\pm bq,b) = (a, b \pm aq)$。
+\end{corollary}
+
+\begin{example}
+  证明：若n为整数，则$(21n+4,14n+3) = 1$，$(n^3+2n,n^4+3n^2+1) = 1$。
+\end{example}
+
+\begin{theorem}[辗转相除法]
+  设a，b是两个正整数，下式为起欧几里得辗转相除算式
+  \\令$r_0 = a \quad r_1 = b $，反复运用带余除法算式：
+  \begin{align*}
+    r_0 =& r_1q_1+r_2  && 0 \leq r_2<r_1
+    \\r_1 =& r_2q_1+r_3  && 0 \leq r_3<r_2
+    \\&\vdots &&\vdots
+    \\r_{n-2} =& r_{n-1}q_{n-1}+r_n  && 0 \leq r_n<r_{n-1}
+    \\r_{n-1} =& r_{n}q_{n}+r_{n+1}  && r_{n+1} = 0
+  \end{align*}
+  由于$r_{n+1}<r_n<r_{n-1}<\dot <r_2<r_1 = b$，且b为有限正整数，所以经过有限的正整数，所以经过有限的步骤，必然存在n，使得$r_{n+1} = 0$。
+  \begin{enumerate}[(1)]
+    \item $(a,b)=r_n$
+    \item 存在整数s，t，使得$r_n=sa+tb$
+    \item 任意整数c，若满足$c \mid a$且$c \mid b$，则$c \mid r_n$
+  \end{enumerate}
+\end{theorem}
+
+\begin{theorem}{递推法求线性组合}
+  设a，b是两个正整数，$q_i$为其欧几里得辗转相除算式的部分商，则由
+  \begin{align*}
+    S_0 &= 0
+    \\S_1 &= 1
+    \\S_{i+1} &=S_{i-1}-q_{n-i}S_i \quad i \geq 1
+  \end{align*}
+  所得的$S_{n-1}$和$S_n$满足$S_{n-1}a+S_n b = r_n$。
+  \begin{align*}
+    \begin{pmatrix}
+      r_1\\
+      r_2
+    \end{pmatrix}& =\begin{pmatrix}
+      0 & 1\\
+      1 & -q_1
+    \end{pmatrix}\begin{pmatrix}
+      r_0 \\
+      r_1
+    \end{pmatrix}\\
+    \begin{pmatrix}
+      r_2\\
+      r_3
+    \end{pmatrix}& = \begin{pmatrix}
+      0 & 1\\
+      1 & -q_2
+    \end{pmatrix}\begin{pmatrix}
+      r_1\\
+      r_2
+    \end{pmatrix}\\
+    &\dots  \dots \\
+    \begin{pmatrix}
+      r_{n-1}\\
+      r_n
+    \end{pmatrix}& = \begin{pmatrix}
+      0 & 1\\
+      1 & -q_{n-1}
+    \end{pmatrix}\begin{pmatrix}
+      r_{n-2}\\
+      r_{n-1}
+    \end{pmatrix}
+  \end{align*}
+\end{theorem}
+
+\begin{example}
+  试求s，t，使得$30111s+4520t = (30111,4520)$。
+\end{example}
+\begin{solution}
+  \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+    \hline i&0&1&2&3&4&5&6&7&8&9&10&11\\
+    \hline $q_{12-i}$& & &2&1&1&4&1&21&1&1&1&6\\
+    \hline $S_i$&0&1&-2&3&-5&23&-28&611&-639&1250&-1889&12584\\
+    \hline
+  \end{tabular}
+\end{solution}
+\begin{note}
+  $S_{i+1}=S_{i-1}-q_{n-i}S_i$
+\end{note}
+\begin{exercise}
+  \begin{enumerate}[1)]
+    \item 如果$(a,b) = d$，那么$\{ sa+tb \mid s , t \in Z \} $是什么？
+    \item 试求出一对整数s和t满足$s*12345 - t*345 = (12345,345)$。
+  \end{enumerate}
+\end{exercise}
+
+\section{一次不定方程}
+\begin{theorem}
+  设a，b是两个不全为0的整数，则
+  \begin{enumerate}[(1)]
+    \item 对于任何正整数$k$，$(ka,kb)=k(a,b)$
+    \item $(\frac{a}{(a,b)} ,\frac{b}{(a,b)} ) = 1$
+  \end{enumerate}
+\end{theorem}
+\begin{proof}
+  (2)由(1)，$(a,b)(\frac{a}{(a,b)} , \frac{b}{(a,b)})=((a,b)\frac{a}{(a,b)},(a,b)\frac{b}{(a,b)}) = (a,b)$\\
+  因为$(a,b) \neq 0$，所以$(\frac{a}{(a,b)} , \frac{b}{(a,b)}) = 1$。
+\end{proof}
+
+\begin{theorem}
+  设a，b，c为整数，$a \neq 0,c \neq 0$，若$(a,b) = 1$，则$(a,bc) = (a,c)$。
+\end{theorem}
+\begin{remark}
+  $d = (a,bc),d^{\prime} = (a,c) \quad  proof d \mid d^{\prime} \ and \ d^{\prime} \mid d$。 
+\end{remark}
+
+\begin{corollary}
+  设a，b，c为整数，$a \neq 0$，若$(a,b) = 1$，$a \mid bc $，则$a \mid c$。
+\end{corollary}
+
+\begin{example}
+  证明：若$a_1b_1-a_2b_2 = 1$，则$(a_1+a_2,b_1+b_2) = 1$。
+\end{example}
+\begin{proof}
+  $a_1b_1 - a_2b_2 = 1 \Rightarrow (b_1,b_2) = 1,(a_1,a_2)=1 $ comes from \  \ref{thm1.2}(6)\\
+  $(b_1,b_1+b_2) = (b_1,b_2) = 1$\\
+  $(b_1+b_2,b_1(a_1+a_2)) = (b_1+b_2,a_1+a_2)$\\
+  $(b_1+b_2,b_1(a_1+a_2)) = (b_1+b_2,b_1(a_1+a_2)-a_2(b_1+b_2)) = (b_1+b_2,1) = 1$。
+\end{proof}
+
+\begin{theorem}
+  设a，b是两个完全不为0的整数，整系数不定方程$ax+by = c$有解的充分条件是$(a,b) = c$。此时，若$x = x_0,y=y_0$是方程的一个特解，那么方程的所有整数解可以表示为:\\
+  $$
+  \left\{
+    \begin{aligned}
+      x &= x_0- \frac{b}{(a,b)}t  \\
+      y &= y_0+ \frac{a}{(a,b)}t  \\
+      t & \in Z
+    \end{aligned}
+  \right.
+  $$
+\end{theorem}
+
+\begin{example}
+  求不定方程$18x+7y = 44$的所有整数解
+\end{example}
+\begin{solution}
+  根据辗转相除法可得\\
+  $18*2 + 7*(-5) = 1$
+  特解为：
+  $$
+  \left\{
+    \begin{aligned}
+      x &=2\\
+      y &=-5
+    \end{aligned}
+  \right.
+  $$
+  不定方程$18x+7y = 44$的特解为:
+  $$
+  \left\{
+    \begin{aligned}
+      x_0 &=2 \times 44 = 88\\
+      y_0 &=(-5) \times 44 = -220
+    \end{aligned}
+  \right.
+  $$
+  原不定方程的特解为：
+  $$
+  \left\{
+    \begin{aligned}
+      x &= 88 - 7t\\
+      y &= -220+18t\\
+      t & \in Z
+    \end{aligned}
+  \right.
+  $$
+\end{solution}
+
+\begin{example}
+  \\
+  1.求不定方程$a_1x_1+a_2x_2+ \dot +a_{n-1}x_{n-1}+x_n = N$的所有整数解。\\
+  2.求不定方程$18x+7y+6z = 44$的所有整数解。\\
+  3.求不定方程$6x+10y+15z = 44$的所有整数解。
+\end{example}
+\begin{solution}
+  \\2.$(18,7) = 1 \Rightarrow 18x+7y$可以表示任何整数，$z$可以任取。\\
+  转化为$18x+7y = 44 -6z$来求得二元不定方程的解。\\
+  3.$(6,10) =2 \Rightarrow 6x +10y = 2t$\\
+  原方程转化为$2t+15z = 44$\\
+  其解为：
+  $$
+  \left\{
+    \begin{aligned}
+      t &=-308-15t_1\\
+      z &= 44+2t_1\\
+      t_1 & \in Z
+    \end{aligned}
+  \right.
+  $$
+  $3x+5y = t$的所有整数解可以表示为；
+  $$
+  \left\{
+    \begin{aligned}
+      x &=2t-5t_2\\
+      y &=-t+3t_2\\
+      t_2 & \in Z
+    \end{aligned}
+  \right.
+  $$
+\end{solution}
+\begin{exercise}
+  求解不定方程$x^2+y^2=z^2$
+\end{exercise}
+
+\section{最小公倍数}
+\begin{definition}
+  设a，b是两个不全为0的整数，整数满足$a \mid c, b \mid c$，则称c为a和b的公倍数，在a和b的所有公倍数中，一定有一个正的最小公倍数，称为a和b的最小公倍数，记作$[a,b]$，或者$lcm(a,b)$。
+\end{definition}
+
+\begin{theorem}
+  设a，b是两个正整数，且$(a,b) = 1$，
+  \begin{enumerate}[(1)]
+    \item 若$a \mid c,b \mid c$，则$ab \mid c$
+    \item $[a,b] = ab$
+  \end{enumerate}
+\end{theorem}
+
+\begin{theorem}
+  设a，b是两个正整数，
+  \begin{enumerate}[(1)]
+    \item 对于任何正整数k，$[ka,kb] = k [a,b]$
+    \item $[a,b]= \frac{ab}{(a,b)}$
+    \item 若$a \mid c, b \mid c$，则$[a,b] \mid c$
+  \end{enumerate}
+\end{theorem}
+
+\begin{example}
+  若$x,y, \sqrt{x} + \sqrt{y} $均为整数，试证明$\sqrt{x} , \sqrt{y}$均为整数。
+\end{example}
+
+\begin{proof}
+  若$\sqrt{x}+\sqrt{y}=0$，则$x=y=0$，结论成立\\
+  $\sqrt{x} = \frac{1}{2} ((\sqrt{x}+\sqrt{y})+(\sqrt{x}-\sqrt{y}))$所有$\sqrt{x},\sqrt{y}$都是有理数\\
+  不妨设$\sqrt{x}=\frac{b}{a}$，a，b为正整数，且$(a,b)=1$\\
+  $x =  \frac{b^2}{a^2}$为整数，$(a^2,b^2)=a^2 \Rightarrow (a,b)=(a,b^2) = (a^2,b^2)$\\
+  所以$a= 1,\  \sqrt{x}$为整数。
+\end{proof}
+
+\begin{theorem}
+  $a_1,a_2,\dots,a_n $不全为$0$的整数，不妨设$a_1 \neq 0$，定义$d_1 = (a_1,a_2),d_2=(d_1,a_3),\dots ,d_{n-1}=(d_{n-2},a_n)$，则$(a_1,a_2,\dots,a_n) = d_{n-1}$。
+\end{theorem}
+
+\begin{conclusion}
+  若正整数$d = (a_1,a_2,\dots,a_n)$，则存在整数$s_1,s_2,\dots,s_n$，使得$d=s_1a_1+s_2a_2+\dots +s_na_n$
+\end{conclusion}
+
+\begin{theorem}
+  正整数c是$a_1,a_2,\dots,a_n$的最大公因数，当且仅当:
+  \begin{enumerate}[(1)]
+    \item $c \mid a_1, c \mid a_2, \dots ,c \mid a_n$。
+    \item 任何整数$c^{\prime}$若满足$c^{\prime} \mid a_1,c^{\prime} \mid a_2, \dots , c^{\prime} \mid a_n$，则$c^{\prime} \mid c$。
+  \end{enumerate}
+\end{theorem}
+
+\begin{theorem}
+  设$a_1,a_2,\dots , a_n$是n个不为0的整数，定义$m_1 = [a_1,a_2],m2 = [m_1,a_3],\dots , m_{n-1} = [m_{n-2},a_n]$，则$[a_1,a_2,\dots , a_n]= m_{n-1}$。
+\end{theorem}
+\begin{theorem}
+  正整数m是$a_1,a_2,\dots,a_n$的最大公因数，当且仅当:
+  \begin{enumerate}[(1)]
+    \item $ a_1 \mid m, a_2 \mid m, \dots ,a_n \mid m$。
+    \item 任何整数$m^{\prime}$若满足$a_1 \mid m^{\prime}, a_2 \mid m^{\prime}, \dots ,a_n \mid m^{\prime}$，则$m \mid m^{\prime}$。
+  \end{enumerate}
+\end{theorem}
+
+\section{素数与算术基本定理}
+\begin{definition}
+  设p是一个整数，$p \neq 0, \pm 1$，如果除了$\pm 1, \pm p$外，p没有其他因数，则称p为素数(或者质数，不可约数)，否则为合数(可约数)，最小的素数为2。
+\end{definition}
+\begin{theorem}
+  合数m的最小不等于1的正因子p一定是素数，且$p \leq \sqrt{m}$。
+\end{theorem}
+\begin{proof}
+  反证法证明$p$一定是素数。\\
+  由 $ \ref{thm1.2}\ (4) \Rightarrow \frac{m}{p} \mid m$，又$1<\frac{m}{p} <m$，$p \leq \frac{m}{p} \Rightarrow p \leq \sqrt{m}$。
+\end{proof}
+
+\begin{conclusion}
+  设整数$m>1$,如果所有不大于$\sqrt{m}$的素数都不是m的因子，那么m是素数。\\
+  整数$m>1$是合数的充要条件是存在不大于$\sqrt{m}$的素因子。
+\end{conclusion}
+
+\begin{theorem}
+  素数有无穷多个。
+\end{theorem}
+\begin{proof}
+  反证法证明，有有限个素数$p_1,p_2,\dots , p_n$\\
+  考虑整数$A = p_1p_2 \dots p_n +1$\\
+  不妨设$p_i \mid A \Rightarrow p_i \mid A -p_1p_2\dots p_n$，即$p_i \mid 1$，矛盾。
+\end{proof}
+
+\begin{theorem}[素数定理]
+  $\pi (x)$表示不超过x的素数个数。
+  \begin{align*}
+    \lim_{x \rightarrow \infty} \pi (x) \frac{ln(x)}{x} = 1
+  \end{align*}
+\end{theorem}
+\begin{theorem}[伯特兰-切比雪夫定理]
+  设整数$n>3$,至少存在一个素数p满足$n<p<2n-2$。
+\end{theorem}
+\begin{theorem}[算术基本定理]
+  设n是一个大于1的正整数，那么n一定可以分解成一些素数的乘积。若规定n的所有素因子按照从小到大的顺序排列，那么n的分解方式是唯一的。
+\end{theorem}
+\begin{definition}
+  设n是大于1的正整数，$n = \prod_{i=1}^{s} p_i^{\alpha_i}(\alpha_i>0,p_i<p_j(i<j))$称为n的标准分解式。
+\end{definition}
+
+\begin{example}
+  设$m = \prod_{i=1}^{s}p_i^{\alpha_i},\ n = \prod_{i=1}^{s}p_i^{\beta_i},\alpha_i \geq 0 , \beta_i \geq 0, \ p_i \neq p_j(i \neq j)$ proof:\\
+  \begin{enumerate}[(1)]
+    \item $m \mid n \Leftrightarrow 1 \leq i \leq s , \alpha_i \leq \beta_i$\\
+    \item $(m,n) = \prod_{i=1}^{s}p_i^{\min{\alpha_i,\beta_i}}$\\
+    \item $[m,n] = \prod_{i=1}^{s}p_i^{\max{\alpha_i,\beta_i}}$\\
+  \end{enumerate}
+\end{example}
+\begin{exercise}
+  证明形如$4k+3$的素数有无穷多个。
+\end{exercise}
+\begin{proof}
+  反证法证明，假设形如$4k+3$素数仅有有限个，其全部为$p_1,p_2, \dots ,p_n$，均为大于1的正整数，考虑整奇数：
+  $A = 4p_1p_2 \dots p_n -1$\\
+  A是一个形如$4k+3$的合数\\
+  所以A的素因子全部都是形如$4k+1$的素数，但形如$4k+1$的整数相乘仍然是形如$4k+1$的整数，矛盾。
+\end{proof}
+\begin{exercise}
+  \begin{enumerate}
+    \item 试证明：$\max\{a,b,c\} = a+b+c+ \min \{a,b,c\}-\min \{a,b\} - \min \{b,c\} - \min \{a,c\}$
+    \item 试证明：$gcd(a,lcm(b,c))=lcm(gcd(a,b),gcd(a,c))$
+    \item 试用算术基本定理证明：
+    \begin{align*}
+      \prod_{p} \frac{p}{p-1} = \sum_{i=1}^{+ \infty} \frac{1}{i}
+    \end{align*}
+  \end{enumerate}
+\end{exercise}
+
+\section{高斯函数}
+\begin{definition}
+  实数x的 \textbf{高斯函数} $[x]$是指不超过x的最大的整数，$[x]$也称为x的 \textbf{整数部分} ，x的\textbf{小数部分} ${x}$是指$x-[x]$。
+\end{definition}
+
+\begin{theorem}
+  对于$[x]$，以下结论正确：
+  \begin{enumerate}
+    \item 若$x \leq y \Rightarrow [x] \leq [y]$
+    \item 整数a满足$x-1<a \leq a+1 \Leftrightarrow a = [x]$
+    \item 整数a满足$a \leq x <a+1 \Leftrightarrow a= [x]$
+    \item 对于任意整数n，$[n+x]=n+[x]$
+  \end{enumerate}
+\end{theorem}
+\begin{proof}
+  (4)\\$n+x-1<[n+x] \leq n+x$
+  \\$x-1<[n+x]-n \leq x$
+  \\$[n+x]-n = [x]$
+\end{proof}
+\begin{example}
+  对于任意实数x，y，试证明$[x+y] \geq [x]+[y]$
+\end{example}
+\begin{proof}
+  \\
+  $[x+y] = [[x]+[y]+\{x\}+\{y\}]$\\
+  $[x+y] = [x]+[y]+[\{x\}+\{y\}]$\\
+  $[\{x\}+\{y\}] \geq 0$\\
+  $[x+y] \geq [x]+[y]$
+\end{proof}
+\begin{theorem}
+  对于整数a，b，且$b>0$，带余除法算式为$a = qb +r, 0 \leq r <b$，则$q = [ \frac{a}{b}]$。
+\end{theorem}
+\begin{proof}
+  \\$q = \frac{a}{b}- \frac{r}{b},\quad 0 \leq \frac{r}{b} <1$\\
+  \\$\frac{a}{b} -1 \leq q = \frac{a}{b}- \frac{r}{b} < \frac{a}{b}$\\
+\end{proof}
+\begin{theorem}
+  设$p$是一个素数，则$n!$中包含$p$的幂次为$\sum_{i>1}[\frac{n}{p^i}]$。
+\end{theorem}
+for example:
+ \[
+  30!= 1 \times 2 \times \cdots \times 30 = p_1^{e_1}p_2^{e_2} \cdots = 2^{e_1}3^{e_2} \cdots 
+ \]
+ \[
+  [\frac{30}{2}]+[\frac{30}{2^2}] +[\frac{30}{2^3}] +[\frac{30}{2^4}]+[\frac{30}{2^5}] \cdots 
+ \]
+ \[
+   =15+7+3+1+0+ \cdots
+ \]
+所以$e1 = 15+7+3+1$
+\begin{proof}
+  定理1.22\\
+  \\$p^i$的倍数共有$[\frac{n}{p^i}]$\\
+  \\当$(p,k) = 1$时，整数$p^ik$为$n!$提供的p的幂次为i\\
+  \\由于$p^ik$同时是$p,p^2,\dots ,p^i$的倍数，所以恰好共计数了$i$次\\
+  \\因此$n!$中包含$p$的幂次为$\sum_{i>1}[\frac{n}{p^i}]$\\
+\end{proof}
+\begin{example}
+  试证明$ \binom{100}{50} $,的十进制末位数不为0.
+\end{example}
+\begin{proof}
+  $\\ \binom{100}{50} = \frac{100!}{50!50!}$\\
+  $\\100! = 2^{e_1}3^{e_2}5^{e_3} \cdots$\\
+  $\\50! =  2^{b_1}3^{b_2}5^{b_3} \cdots$\\
+  $\\b_3 = [\frac{50}{5}]+[\frac{50}{25}]+[\frac{50}{125}] $\\
+  $\\e_3 = [\frac{100}{5}]+[\frac{100}{25}]+[\frac{100}{125}]$\\
+  \\所以$\binom{100}{50}$没有素因数5，所以末位不为0.\\
+\end{proof}
+\begin{example}
+  设n，m为正整数，$n>m$，试证明：$\binom{n}{m} = \frac{n(n-1)\dots(n-m+1)}{m!}$是整数。
+\end{example}
+\begin{proof}
+  \\ $\binom{n}{m} = \frac{n!}{m!(n-m)!}$\\
+  \\ 只需证明$\sum_{i \geq 1}[\frac{n}{p_i}] \geq \sum_{i \geq 1}[\frac{m}{p_i}]+ \sum_{i \geq 1}[\frac{n-m}{p_i}]$\\
+  \\由例题1.10可知$[\frac{n}{p_i}] \geq [\frac{m}{p_i}]+ [\frac{n-m}{p_i}]$\\
+\end{proof}
+
+\begin{problemset}
+ \item 设a，m，n均为正整数，试着证明$(a^m-1,a^n-1) = a^{(m,n)}-1$
+ \begin{proof}
+   $Might\ as\ well,m \geq n,m = nq+r, 0 \leq r<n$ 
+   \\$a^m -1 = a^{nq+r}-a^r+a^r-1 = a^r(a^{nq} -1)+a^r-1$
+   \\$ = a^r(a^n-1)(1+a^n+a^{2n}+ \cdots +a^{(q-1)n})+a^r-1$
+   \\so $(a^m-1) mod (a^n-1) = a^r-1$
+   \\$using\ division\  algorithm,\ the \ answer \ is \ a^{(m,n)}-1.$
+ \end{proof}
+ \item $The \ Fermat \  number \ is \  F_n = 2^{2^n}+1,if \ F_n \ is \ prime \ number\ ,try \ to \ proof: \\ if \ 2^m+1 \ is \ prime \ number\, then\ m \ just \ like \ 2^n \in Z.$
+ \begin{proof}
+   
+ \end{proof}
+\end{problemset}
+\chapter{同余}
+\section{同余的基本性质}
+\begin{definition}
+  设m是正数，a，b为两个整数， \uline{如果a-b是m的倍数}，那么称a和b关于m同余，记作$a \equiv b(mod\ m)$，否则称a和b关于m不同余，记作$a \not\equiv b(mod \ m )$。
+\end{definition}
+\begin{theorem}
+  同余式等价关系
+  \begin{enumerate}
+    \item 自反性
+    \item 对称性
+    \item 传递性
+  \end{enumerate}
+\end{theorem}
+\begin{definition}
+  设m是正整数，全体整数按照模m同余可以划分成m个不同的等价类，称为模m剩余类，整数a所在的剩余类记为$\bar{a}$，整数x属于剩余类$\bar{a}$当且仅当$x \equiv a(mod \ m)$。从每个剩余类中取出一个整数形成的m元素称为模m完全剩余系。
+\end{definition}
+例如，若m=6，则模6剩余类共有6个
+可以表示为$\bar{0},\bar{1},\bar{2},\cdots ,\bar{5} $
+而${0,1,2,3,4,5},{-6,7,2,3,4,5}$都是模6完全剩余系。
+\begin{definition}
+  设m是正整数，如果整数a与m互素，那么a所在的剩余类$\bar{a}$称为模m简化剩余类，从每个简化剩余类中取出一个整数形成的集合称为模m的简化剩余系。在整数1，2，$\cdots $，m中所有与m互素的整数的个数称为m的欧拉函数，记作$ \varphi (m)$，简化剩余系共有$ \varphi (m)$个整数。
+\end{definition}
+\begin{example}
+  设m，n为正整数，试将模m的剩余类$\bar{a}$拆分成模mn的剩余类的和。
+\end{example}
+\begin{solution}
+  \begin{itemize}
+    \item 模m剩余类$a(mod \ m)$可以表示为$\{a+mk|k \in Z\}$，而全体整数按照模n又可以分成n个剩余类，即$\bar{0},\bar{1},\cdots,\bar{n-1}$。
+    \item $\{ a+mk | k \in Z\}=\{a+m(tn)|t \in Z\} \cup \{a+m(tn+1)|t \in Z\} \cup \cdots \cup \{a+m(tn+n-1)| t \in Z\} $。
+    \item $ = \{a+mnk|t \in Z\} \cup \{a+m+mnt| t \in Z\} \cup \cdots \cup \{a+m(n-1)+mnt | t \in Z\}$
+    \item 也就是，模m的剩余类$\overline{a}$可以拆分成n个模mn的剩余类，$\overline{a} ,\overline{a+m} ,\cdots,\overline{a+m(n-1)} $。
+  \end{itemize}
+\end{solution}
+\begin{theorem}[同余的性质]
+  设m，n是正整数，$a \equiv b(mod \ mn)$，则$a \equiv b(mod \ m),a \equiv b(mod \ n)$。
+\end{theorem}
+\begin{note}
+  定理2.2的逆定理不成立
+\end{note}
+\begin{theorem}
+  设m，n是正整数，若$a \equiv b(mod \ n),a \equiv b(mod \ n)$，则$a \equiv b(mod[m,n])$。
+\end{theorem}
+\begin{theorem}
+  关于同余，以下性质成立。
+  \begin{enumerate}[(1)]
+    \item 若$a \equiv b(mod \ m) \Rightarrow a+c =b+c(mod \ m) $。
+    \item 若$a \equiv b(mod \ m),k \in Z \Rightarrow ak \equiv bk(mod \ m)$。
+    \item 若$ak \equiv bk(mod \ m),k \in Z,(k,m) =1  \Rightarrow a \equiv b(mod \ m)$。
+    \item 若$a \equiv b(mod \ m),k \in Z^{+} \Leftrightarrow ak \equiv bk(mod \ mk)$。
+    \item 若$a \equiv b(mod \ m)$ ，$f(x)$ 为任一整系数多项式，则$f(a) \equiv f(b)(mod \ m)$。
+  \end{enumerate}
+\end{theorem}
+\begin{conclusion}
+  若$a_1 \equiv a_2 (mod \ m),b_1 \equiv b_2 (mod \ m) \Rightarrow a_1+b_1 \equiv a_2+b_2(mod \ m), a_1b_1 \equiv a_2b_2(mod \ m)$。
+\end{conclusion}
+\begin{example}
+  试证明正整数m能被3整除的充要条件是它的十进制表示各数位上数字之和是3的倍数。
+\end{example}
+\begin{proof}
+  $m = (a_{n-1} \cdots a_1a_0)_{10}$\\ \\
+  $\sum_{i=0}^{n-1} a_i10^i \equiv \sum_{i=0}^{n-1}a_i1^i$\\ \\
+  $m(mod \ 3) = \sum_{i=0}^{n-1}a_i(mod \ 3)$
+\end{proof}
+\begin{note}
+  讨论9,7,11,1001,13 \\ 
+  \begin{itemize}
+    \item $\sum_{i=0}^{n-1} a_i10^i \equiv \sum_{i=0}^{n-1}a_i1^i = \sum_{i=0}^{n-1}a_i(mod \ 9)$\\
+    \item $\sum_{i=0}^{n-1} a_i10^i \equiv \sum_{i=0}^{n-1}a_i(-1)^i (mod \ 11)$\\
+    \item $12345678 = 12 \times {(10^3)}^2+345 \times 10^3 +678\\=12 \times (-1)^2+345 \times (-1)+678(mod \ 1001)$\\
+    \item $1001 = 7 \times 11 \times 13$
+  \end{itemize}
+\end{note}
+\begin{exercise}
+  \begin{enumerate}
+    \item 若x，y为整数，证明$10|2x+5y \Leftrightarrow 10 | 4x+5y$。
+    \begin{solution}
+      \\
+      $10|2x+5y \Leftrightarrow 2|2x+5y, 5|2x+5y.$
+     \[
+       \begin{cases}
+         2x+5y \equiv 0(mod \ 2)\\
+         2x+5y \equiv 0(mod \ 5)
+       \end{cases}
+       \Leftrightarrow \quad 
+       \begin{cases}
+         y \equiv 0(mod \ 2)\\
+         2x \equiv 0(mod \ 5)
+       \end{cases}
+       (2,5)=1 \quad \Leftrightarrow
+       \begin{cases}
+        y \equiv 0(mod \ 2)\\
+        x \equiv 0(mod \ 5)
+       \end{cases}
+      \]
+      \[
+       \begin{cases}
+         4x +5y \equiv 0(mod \ 2)\\
+         4x+5y \equiv 0(mod \ 5)
+       \end{cases}
+       \Leftrightarrow
+       \begin{cases}
+         x \equiv 0(mod \ 2)\\
+         y \equiv 0(mod \ 5)
+       \end{cases}
+     \]
+    \end{solution}
+    \item 计算$2^{1024}( mod \ 10240 )$
+    \begin{solution}
+      \\考虑$2^{1024} \equiv x(mod \ 10240) \Rightarrow 2^{1013} \equiv y(mod \ 5)$
+      \begin{align*}
+        2^{1013}&=2 \times 2^{1012}\\
+        &=2(2^2)^{506}\\
+        &\equiv 2(-1)^{506}
+      \end{align*}
+      所以$2^{1013}\equiv 2 (mod \ 5)$
+    \end{solution}
+  \end{enumerate}
+\end{exercise}
+\section{欧拉函数}
+\subsection{剩余系的遍历}
+\begin{theorem}
+  设m是正整数，若$(a,m) =1 $，则当x遍历模m的一个完全剩余系时，对于任意整数b，$ax+b$遍历模m的一个完全剩余系；当x遍历模m的一个简化剩余系，ax遍历模m的一个简化剩余系。
+\end{theorem}
+\begin{proof}
+  m的剩余系为$\{ x_1,x_2,\cdots ,x_m\}$\\
+  不妨设$1 \leq i \leq j \leq m$\\
+  $ax_i+b \equiv ax_j+b(mod \ m) \Rightarrow x_i \equiv x_j(mod \ m)$\\
+  矛盾\\
+  $ax_i$与m互素，且两两互不同余。
+\end{proof}
+\begin{theorem}
+  设m，n为正整数，$(m,n) =1$，则当x遍历模m的一个完全剩余系，y遍历模m的一个完全剩余系时，$mx+ny$遍历模$mn$的一个完全剩余系；当x遍历模m的一个简化剩余系，y遍历模m的一个简化剩余系时。$mx+ny$遍历$mn$的一个简化剩余系。
+\end{theorem}
+\begin{proof}
+  $(x_i,y_j)$一共有mn种取法\\
+  $i = j$取法相同，$i \neq j$取法不同\\
+  $mx_i+ny_j \equiv mx_{i^{\prime}}+ny_{j^{\prime}}(mod \ mn)$\\
+  $\Rightarrow y_j \equiv y_{j^{\prime}}(mod \ m)$\\
+  $proof: (x_i,n)=1,(y_j,m)=1 \Rightarrow (mx_i+ny_j,mn) =1$\\
+  $(mx_i+ny_j,m) = 1,(mx_i+ny_j,n) =1 $\\
+  $\varphi(m) \varphi(n)$个元素和mn互素\\
+  $\varphi(m) \varphi(n) \leq \varphi(mn)$\\
+  证明$\varphi(mn)$无遗漏\\
+  当x遍历完全，y遍历完全，$mx+ny$遍历完全\\
+  $\forall a \in Z, \exists x_i,y_j \Rightarrow a \equiv a \equiv mx_i+ny_j(mod \ mn)$\\
+  \[
+    (a,mn) = 1 \Rightarrow
+    \begin{cases}
+      (a,m) =1\\
+      (a,n) =1
+    \end{cases}
+    \Rightarrow
+    \begin{cases}
+      (mx_i+ny_j,m)=1\\
+      (mx_i+ny_j,n)=1
+    \end{cases}
+    \Rightarrow
+    \begin{cases}
+      (y_j,m)=1\\
+      (x_i,n)=1
+    \end{cases}
+  \]
+\end{proof}
+\subsection{欧拉函数}
+\begin{theorem}
+  设$m,n$为正整数，若$(m,n)=1$，则$\varphi(mn) = \varphi(m) \varphi(n)$[积性函数]。
+\end{theorem}
+\begin{proof}
+  \\由定理2.6，当x遍历模n的一个简化剩余系，y遍历模m的一个简化剩余系时，mx+ny遍历模mn的一个简化剩余系，所以模mn的一个简化剩余系中的元素个数为$\varphi(mn) = \varphi(m) \varphi (n)$。
+\end{proof}
+\begin{theorem}
+  设p为素数，e为正整数，则$\varphi(p^e) = p^e-p^{e-1}$。
+\end{theorem}
+\begin{proof}
+  \\p是素数$\varphi(p) = p-1(1,2,\cdots,p-1)$\\
+  $\varphi(p^e)$不互素的有$p,p^2,\cdots,p^{e-1},p^e$\\
+  $\varphi(p^e) = p^e-p^{e-1}$
+\end{proof}
+\begin{theorem}
+  设m为正整数，其标准分解式为$m = \prod_{i=0}^s p_i^{\alpha_i}$，则$\varphi(m)=m\prod_{i=0}^s (1-\frac{1}{p_i})$
+\end{theorem}
+\begin{proof}
+  由定理2.7和定理2.8，\\  \\
+  $\varphi(m) = \prod_{i=1}^s\varphi(p_i^{\alpha_i}) = \prod_{i=1}^s(p_i^{\alpha_i}-p_i^{\alpha_i-1})=\prod_{i=1}^sp_i^{\alpha_i}(1-\frac{1}{p_i})=m\prod_{i=1}^s(1-\frac{1}{p_i})$。\\
+\end{proof}
+\begin{example}
+  试求$\varphi(2^33^27)$
+\end{example}
+\begin{solution}
+  \\
+  $\varphi(2^33^27)=2^33^27 \times (1-\frac{1}{2})(1-\frac{1}{3})(1-\frac{1}{7})=144$\\
+\end{solution}
+\begin{example}
+  假设m是两个不相等的素数的乘积，如果已知$\varphi(m)=a$，试求这两个素数。
+\end{example}
+\begin{solution}
+  \\
+  由题意可设$m = pq,\ p,\ q$为不相等的素数，可得二元二次方程组，
+  \[
+    \begin{cases}
+      m = pq\\
+      (p-1)(q-1) = a
+    \end{cases}
+  \]
+    整理可得$p+q = m+1-a$，因此$p,\ q$为以下一元二次方程的两个解
+    \begin{equation*}
+      x^2-(m+1-a)x+m = 0
+    \end{equation*}
+\end{solution}
+\begin{exercise}
+  \begin{enumerate}
+    \item 证明$m>2,2|\varphi(m)$
+    \begin{proof}
+      \\方法一：\\
+      $\varphi(m) = \prod(p_i^{\alpha_i}-p_i^{\alpha_i-1}) $\\
+      分为两种情况考虑：\\
+      1.m含有至少一个奇数因子\\
+      2.m就是等于$2^i,i>1$\\
+      方法二：\\
+      m为奇数\\
+      $1,2,3,\cdots, \frac{m-1}{2}, \frac{m+1}{2},\cdots,m$\\
+      $(i,m)=1 \Rightarrow (m-i,m)=1$\\
+    \end{proof}
+    \item 证明，当$m|n$时，$\varphi(m)|\varphi(n)$。
+    \begin{proof}
+      \\$\varphi(m) = \prod \varphi(p_i^{\alpha_i})$\\
+      $\varphi(n) = \prod \varphi(p_i^{\beta_i})$
+    \end{proof}
+  \end{enumerate}
+\end{exercise}
+\section{欧拉定理}
+\subsection{欧拉定理和费马定理}
+\begin{theorem}[欧拉定理]
+  设m为正整数，$(a,m)=1$，那么$a^{\varphi(m)} \equiv 1(mod \ m)$。
+\end{theorem}
+\begin{proof}
+  \\ 设$r_1,\ r_2,\ \cdots ,\ r_{\varphi(m)}$是模$m$的一个简化剩余系，因为$(a,m) = 1 $，由定理2.4可得，$ar_1,\ ar_2,\ \cdots,ar_{\varphi(m)}$也是模$m$的简化剩余系，因此对于任意$1 \leq i \leq \varphi(m)$，有且仅有唯一的$1 \leq j \leq \varphi(m)$使得$ar_j \equiv r_i(mod \ m)$，所以
+  \begin{equation*}
+    r_1r_2 \cdots r_{\varphi(m)} \equiv ar_1ar_2 \cdots ar_{\varphi(m)} \equiv a^{\varphi(m)}r_1r_2 \cdots r_{\varphi(m)}(mod \ m)
+  \end{equation*}
+  由定理2.4，$a^{\varphi(m)} \equiv 1 (mod \ m)$
+\end{proof}
+\begin{theorem}[费马小定理]
+  设$p$为素数，那么对于任意整数$a$，$a^p \equiv a(mod \ p)$。
+\end{theorem}
+\begin{proof}
+  \begin{enumerate}[(1)]
+    \item 若$(a,p) =1 $，由欧拉定理，$a^{p-1} \equiv 1 (mod \ p)$。
+    \item 若$(a,p) \neq 1$，那么$p | a$，所以$a \equiv 0(mod \ p)$，此时仍有$a^p \equiv a \equiv 0(mod \ p)$。
+  \end{enumerate}
+  欧拉定理和费马小定理反映了整数的幂关于模$m$的周期性。 \\
+\end{proof}
+\begin{exercise}
+  假设今天是星期三，求$2^{20170226}$天后是星期几。
+\end{exercise}
+\begin{solution}
+  \\ 因为$\varphi(7) = 6$，根据欧拉定理，$(2,7) =1,\ 2^6 \equiv 1 (mod \ 7)$，所以，对于任意整数$k \geq 0$，$2^{6k} \equiv 1 (mod \ 7)$。\\
+  又因为$20170226 \equiv 2 (mod \ 6)$，此时$2^{20170226} = 2^{6k+2} = 2^{6k}2^2 \equiv 4(mod \ 7)$，故此$2^{20170226}$天后是星期天。
+\end{solution}
+\subsection{扩展欧拉定理}
+\begin{theorem}[扩展的欧拉定理]
+  设$m$为正整数，且$m= \prod_{i=0}^sp_i^{a_i}(a_i > 0)$，$a$为任意整数，在m的素因子中，仅当$1 \leq i \leq s^{\prime}$时，$p_i|a$，那么，对于任意$k \geq 0, \ t \geq \max_{1 \leq i \leq s^{\prime}}\{a_i\} $，均有$a^{k \varphi(m)+t} \equiv a^t(mod \ m)$。
+\end{theorem}
+\begin{conclusion}
+  设$p_i$为素数，$a$为任意整数，那么，对于任意$k \leq 0, \ t \leq \beta_i$，均有$a^{k \varphi(\prod p_i^{\beta_i})+t} \equiv a^t(mod \ \prod p_i^{\beta_i})$。
+\end{conclusion}
+\vskip 0.5cm
+\begin{exercise}
+  $35^{20191443}(mod \ 75)$
+\end{exercise}
+\begin{solution}
+  \\$35^{k\varphi(75)+t} \equiv 35^t(mod \ 3 \times 5^2)$
+  \\因为$\varphi(75) = \varphi(3) \varphi(25) = 2 \times 5 \times 4 = 40$
+  \\$20191443 \equiv 3 (mod \ 40)$
+  \\所以可以得到$t = 3$，检验可知$3 >2,\ 3>1$
+  \\ $(5^2 \times 7)^{k \varphi(m)+1} \equiv (5^2 \times 7)(mod \ 3 \times 5^2)$
+\end{solution}
+\vskip 0.5cm
+\subsection{模重复平方算法}
+ 设$e = (e_{n-1}e_{n-2} \cdots e_1e_0)_2$是e的二进制表示，其中$e_i(0 \leq i \leq n-1)$为0或1，那么：
+  \begin{align*}
+   a^e &= a^{e_{n-1}2^{n-1}+e_{n-2}2^{n-2}+ \cdots + e_12+e_0} 
+   \\ &= (a^{2^{n-1}})^{e_{n-1}} (a^{2^{n-2}})^{e_{n-2}} \cdots (a^2)^{e_1}a^{e_0}
+  \end{align*}
+ 若我们以此计算
+ \begin{align*}
+  b_0 &\equiv a \equiv a^{2^0}(mod \ m)
+  \\b_1 &\equiv {b_0}^2 \equiv {a^2}^1 (mod \ m)
+  \\b_2 &\equiv {b_1}^2 \equiv {a^2}^2 (mod \ m)
+  \\ \cdots
+  \\b_{n-1} &\equiv {b_{n-2}}^2 \equiv {a^2}^{n-1} (mod \ m)
+ \end{align*}
+则$a^e \equiv \prod_{e_i =1}b_i(mod\ m)$。
+\vskip 0.5cm
+\begin{example}
+  试求$2^{20170226}(mod\ 84375)$
+\end{example}
+\begin{solution}
+  \\ 首先我们可以用欧拉定理化简，因为$84375 = 3^35^5$，所以，
+  \begin{equation*}
+    \varphi(84375) = 3^3 5^5 \times (1- \frac{1}{3})(1- \frac{1}{5}) = 4500
+  \end{equation*}
+  又因为$2^{20170226} \equiv 2^{20170226(mod\ 45000)} \equiv 2^{10226}(mod\ 84375)$，$10226 = (10011111110010)_2$，
+  \\计算$b_0 \equiv 2,b_1 \equiv 4, b_2 \equiv 16 , \cdots , b_n = {b_{n-1}}^2, \cdots ,b_13 = 74146(mod 84375)$
+  \\在计算过程中可以先和84375模的，就尽可能模，所以$b_i <84375$。
+  \begin{align*}
+    2^{10226} & \equiv b_1b_2 \cdots b_{13}
+    \\ & \equiv 9019b_5b_6b_7b_8b_9b_{10}b_{13}
+    \\ & \equiv 76999b_6 \cdots
+    \\ & \equiv 17884b_7 \cdots
+    \\ & \equiv 10354b_8 \cdots
+    \\ & \cdots
+    \\ & \equiv 65614(mod\ 84375)
+  \end{align*}
+\end{solution}
+\vskip 0.5cm
+\begin{note}
+  $a^p \equiv a^{p(mod\ \varphi(m))}(mod\ m)$
+\end{note}
+\section{一次同余式}
+\subsection{同余式及其解数}
+\begin{definition}[同余式及其解数]
+设$f(x) = \sum_{i=0}^n a_ix^i = a_nx^n + a_{n-1}x^{n-1}+ \cdots +a_1x +a_0$是一个整系数多项式，𝑚为正整数，那么称$f(x) \equiv 0(mod m)$为模m同余式。
+如果$a_n \not\equiv (mod\ m)$，则称该同余式的次数为n。如果整数a满足$f(a) \equiv 0(mod \ m)$，称a为同余式的解。
+\\ 由定理2.4之(5)，若$b \equiv a(mod\ m)$，则$f(x) \equiv f(a) \equiv 0(mod\ m)$，所以b也是同余式的解，一般地，若a是同余式的解，那么模m剩余类$\bar{a}$中
+的所有整数都是同余式的解，记作$x \equiv a(mod\ m)$。模m的完全剩余系
+中同余式的解的个数称为同余式的解数。
+\end{definition}
+\vskip 0.5cm
+例如，3满足同余式
+$x^2 + 1 \equiv 0(mod\ 1 0)$，所以剩余类$x \equiv 3(mod\ 1 0)$中
+的整数都是同余式的解，同样$x \equiv 7(mod\ 1 0)$也是同余式的解，该同余
+式的解数为2。
+\subsection{一次同余式}
+\begin{theorem}
+  设m为正整数，同余式$ax \equiv b(mod \ m)$有解的充要条件是$(a,m) | b$。在有解的情况下，解数为$(a,m)$，且若$x = x_0$是同余式的一个特解，那么同余式的所有解可以表示为$x \equiv x_0+ \frac{m}{(a,m)}t(mod \ m), \ t =0,1,2, \cdots, (a,m)-1$。
+\end{theorem}
+\begin{proof}
+  \\$ax \equiv b(mod\ m)$有解也就是存在整数$y$使得$ax-b = my$有解的充要条件是$(a,m)|b$，所以同余式$ax \equiv b(mod\ m)$有解地充要条件是$(a,m)|b$。
+  \\由定理1.8，若$x = x_0,\ y = y_0$是$ax-b = my $的一个解，那么$ax - b = my$的所有解可以表示为，
+  \[
+    \begin{cases}
+      x = x_0+ \frac{m}{(a,m)}t
+      \\y = y_0+ \frac{a}{(a,m)}t
+      \\t \in Z
+    \end{cases}
+  \]
+  我们将$x = x_0 + \frac{m}{(a,m)}t$写成$(a,m)$个模m的同余类为：
+  \\$\overline{x_0},\ \overline{x_0+\frac{m}{(a,m)}},\ \overline{x_0+2*\frac{m}{(a,m)}} ,\ \cdots ,\ \overline{x_0+((a,m)-1)*\frac{m}{(a,m)}}$
+  \\或者说原同余式的解为$x \equiv x_0 + \frac{m}{(a,m)} t(mod\ m),\ t = 0,\ 1,\ 2,\ \cdots ,\ (a,m)-1$,解数为$(a,m)$。
+\end{proof}
+
+\begin{example}
+  试求同余式$6x \equiv 28(mod \ 32)$的解。
+\end{example}
+\begin{solution}
+  \\因为$(6,32)=2 |28$，所以同余式有两个解。
+  \begin{itemize}
+    \item 原同余式可以等价于$3x \equiv 14(mod \ 16)$。
+    \item 先求同余式$3x \equiv 1(mod \ 16)$的解,$x \equiv -5(mod \ 16)$。
+    \item 由此$3x \equiv 14(mod \ 16)$的解为$x \equiv -5 \times 14 \equiv 10(mod\ 16)$，$x =10$是原同余式的一个特解。
+    \item 原同余式的所有解为$x \equiv 10+16t(mod\ 16),\ t =0,\ 1$。
+  \end{itemize}
+\end{solution}
+\subsection{逆元}
+\begin{definition}
+  设m为正整数，$(a,m)=1$，同余式$ax \equiv 1(mod\ m)$的解称为a模m的逆元，记作$x \equiv a^{-1}$，当$n \geq 0$时，我们用$a^{-n}(mod\ m)$来表示$a^n(mod\ m)$的逆元
+\end{definition}
+\begin{example}
+  试求整数17模13的逆元。
+\end{example}
+\begin{solution}
+  \\17模13的逆元即求同余式$17x \equiv 1 (mod\ 13)$的解。同余式可以等价地变形为$4x \equiv 1(mod\ 13)$，因为$4 \times 10 - 13 \times 3 =1$，所以$4x \equiv 1(mod \ 13)$的解为$x \equiv 10(mod\ 13)$，该剩余类的所有整数均为17模13的逆元。
+\end{solution}
+\begin{theorem}
+  设m为正整数，$(a,m)=1$，那么$a^{\varphi(m)-1}$是a模m的逆元。
+\end{theorem}
+\begin{proof}
+  \\ 因为$(a,m)=1$，根据欧拉定理，可以得到，
+  \begin{align*}
+    a^{\varphi(m)} \equiv 1(mod\ m)
+  \end{align*}
+  即$a \cdot a^{\varphi(m)-1} \equiv 1(mod\ m)$
+  \\所以$x \equiv a^{\varphi(m)-1}$是同余式$ax \equiv 1 (mod\ m)$的解，由定义可知，$a^{\varphi(m)-1}$是a模m的逆元。
+\end{proof}
+\vskip 0.5cm
+如果已知a模m的逆元$x \equiv a^{-1}(mod\ m)$，那么同余方程$ax \equiv b(mod\ m)$的解可以写成$x \equiv a^{-1}b(mod\ m)$。
+\vskip 0.5cm
+\begin{example}
+  试证明：$(a^n)^{-1} \equiv (a^{-1})^n(mod\ m)$。
+\end{example}
+\begin{proof}
+  \begin{itemize}
+    \item 当$n \geq 0,\ a^n(a^{-1})^n \equiv 1(mod\ m)$，根据定义即可得证。
+    \item 当$n < 0$，$(a^{-1})^n \equiv ((a^{-1})^{-n})^{-1} \equiv ((a^{-n})^{-1})^{-1} \equiv (a^n)^{-1}(mod\ m)$
+  \end{itemize}
+\end{proof}
+\begin{theorem}[Wilson定理]
+  设$p$是素数，那么$(p-1)! \equiv -1(mod\ p)$。
+\end{theorem}
+\begin{proof}
+  \\ 证明逆定理
+  \\$((p-1)!,p) = (-1,p )= 1$
+  \\证明正定理
+  \\若$p =2$，结论显然成立。
+  \\设$p>2$，对于$1 \leq a \leq p-1$，因为$(a,p)=1$，所以$a$存在逆元$a^{\prime}$，由$ax \equiv 1 (mod\ m )$的解数为1，满足$1 \leq a^{\prime} \leq p-1$的逆元是唯一的。在$1,\ 2,\ \cdots,\ p-1$中，如果$a \neq a^{\prime}$，我们将$a$和$a^{\prime}$配对，得到$aa^{\prime} \equiv 1(mod\ m)$。如果$a = a^{\prime}$，得到$a^2 \equiv aa^{\prime} \equiv 1(mod\ p)$，只有$a =1$和$a =p-1$，所以，$(p-1)! \equiv 1 \times (p-1) \equiv -1(mod\ p)$。
+\end{proof}
+\vskip 0.5cm
+\begin{conclusion}
+  设p是奇素数，那么$(\frac{p-1}{2}!)^2 \equiv (-1)^{\frac{p+1}{2}}(mod\ p)$。
+\end{conclusion}  
+\
+\begin{proof}
+  \\根据Wilson定理
+  \begin{align*}
+    1 \times 2 \times \cdots \times \frac{p-1}{2} \times \frac{p+1}{2} \times \cdots \times (p-1) \equiv -1(mod\ p)
+    \\ (\frac{p-1}{2}!)^2(-1)^{\frac{p-1}{2}} \equiv -1(mod\ p)
+    \\ (\frac{p-1}{2}!)^2 \equiv (-1)^{\frac{p+1}{2}}(mod\ p)
+  \end{align*}
+\end{proof}
+\begin{note}
+  $a \equiv b (mod\ m) \Rightarrow (a,m)=(b,m)$
+\end{note}
+\section{中国剩余定理}
+\subsection{中国剩余定理}
+\begin{theorem}[CRT]
+  设$m_1,\ m_2,\ ,\ \cdots ,\ m_s$为两两互素的正整数，$b_1,\ b_2,\ \cdots ,\ b_s$为任意整数，那么同余式组
+  \[
+    \left\{
+      \begin{matrix}
+        x \equiv b_1 (mod\ m_1)
+        \\ x \equiv b_2(mod\ m_2)
+        \\ \cdots 
+        \\x \equiv b_s(mod\ m_s)
+      \end{matrix}
+    \right.
+  \]
+  模$M = m_1m_2 \cdots m_s$有唯一解$x \equiv \sum_{i=1}^sb_i \cdot \frac{M}{m_i}(\frac{M}{m_i})^{-1}(mod\ m_i)(mod\ M)$
+\end{theorem}
+\textbf{关于中国剩余定理的理解，可以参考刘铎老师的知乎：}
+\href{https://zhuanlan.zhihu.com/p/44591114
+}{https://zhuanlan.zhihu.com/p/44591114
+}
+\\
+\begin{example}
+  求解同余式
+  \[
+    \begin{cases}
+      x \equiv 1(mod\ 2)
+      \\ x \equiv 1(mod\ 3)
+      \\ x \equiv 3(mod\ 5)
+      \\ x \equiv 5(mod\ 7)
+    \end{cases}
+  \]
+\end{example}
+\vskip 0.5cm
+\begin{solution}
+  \\ $x \equiv 1 \times 105 \times 1 + 1 \times 70 \times 1 +3 \times 42 \times 3 +5 \times 30 \times 4 \equiv 1153 \equiv 103(mod\ 210)$
+  \\如果将上述$105(mod\ 2)$的逆元1换成其他代表比如3，结果还正确，因为$105 \times (1+2t) = 105 \times 1 +Mt \equiv 105 (mod\ M)$
+\end{solution}
+\subsection{递推法}
+\begin{example}
+  求解同余式
+  \[
+    \begin{cases}
+      x \equiv 1(mod\ 11)
+     \\ x \equiv 2(mod\ 3)
+     \\ x \equiv 3(mod\ 5)
+    \\  x \equiv 4(mod\ 7)
+    \end{cases}
+  \]
+\end{example}
+\begin{solution}
+  \\ $x \equiv 1(mod\ 11) \Rightarrow x-1 \equiv 0(mod\ 11)$
+  \\ $x \equiv 2(mod\ 3)  \Rightarrow x -1 \equiv 1(mod\ 3)$
+  \\ 结合上面两式: $x-1 \equiv 1 \times 11 \times (-1) \equiv -11(mod\ 33)$
+  \\由此，$x+10 \equiv 0(mod\ 33)$
+  \\再由$x \equiv 3 (mod\ 5) \Rightarrow x+10 \equiv 13 \equiv 3(mod\ 5)$
+  \\结合上面两式：$x+10 \equiv 3 \times 33 \times 2 \equiv 198 \equiv 33(mod\ 165)$
+  \\由此，$x-23 \equiv 0(mod\ 165)$
+  \\再由$x \equiv 4(mod\ 7) \Rightarrow x-23 \equiv -19 \equiv 2(mod\ 7)$
+  \\结合上面的两式：$x-23 \equiv 2 \times 165 \times 2 \equiv 660(mod\ 1155) \Rightarrow x \equiv 683(mod\ 1155)$
+
+\end{solution}
+\begin{conclusion}
+  $\begin{cases}
+    x \equiv 0(mod\ a)
+    \\ x \equiv y(mod\ b)
+  \end{cases}
+  \Rightarrow
+  x \equiv y \cdot a \cdot (a^{-1})(mod\ b) (mod\ ab)$
+\end{conclusion}
+\vskip 0.5cm
+\begin{example}
+  试用递推法，求韩信点兵的问题：
+  \[\begin{cases}
+    x \equiv 2(mod\ 3)
+    \\ x \equiv 3(mod\ 5)
+    \\ x \equiv 2(mod\ 2)
+  \end{cases}\]
+\end{example}
+\subsection{应用}
+\begin{example}
+  计算$17^{20200301}(mod\ 105)$
+\end{example}
+\begin{solution}
+  \\ $17^{20200301} \equiv (-1)^{20200301} \equiv -1 \equiv 2(mod\ 3)$
+  \\$17^{20200301} \equiv 2^{20200301(mod\ 4)} \equiv 2(mod\ 5)$ 
+  \\$17^{20200301} \equiv 3^{20200301(mod\ 6)} \equiv 3^{-1} \equiv 5(mod\ 7)$
+  \\根据中国剩余定理，第1，2式合并：
+  \\$17^{20200301} \equiv 2 \times 7 \times (-2) + 5 \times 15 \times 1 \equiv 75-28 \equiv 47 (mod\ 105)$
+\end{solution}
+\vskip 0.5cm
+\begin{example}
+  已知RSA解密密匙$(d,p,q)$，解密密文C。
+\end{example}
+\begin{solution}
+  一般解法，$m \equiv C^d(mod\ pq)$
+  中国剩余定理解法：
+    \begin{equation*}
+      m_1 \equiv C^{d(mod\ p-1)}(mod\ p)
+    \end{equation*}
+    \begin{equation*}
+      m_2 \equiv C^{d(mod\ q-a)}(mod\ q)
+    \end{equation*}
+  \begin{equation*}
+    m \equiv m_1pq^{-1}(mod\ q)+m_2pq^{-1}(mod\ p)(mod\ pq)
+  \end{equation*}
+\end{solution}
+\section{同余式组解法}
+\subsection{同余式组解数}
+\begin{theorem}
+  设$m_1,\ m_2,\ \cdots ,\ m_s$为两两互素的正整数，若对于$1 \leq i \leq s$，同余式$f_i(x) \equiv 0(mod\ m_i)$有$C_i$个解，那么，同余式组
+  \[
+    \left\{
+    \begin{matrix}
+      f_1(x) \equiv 0(mod\ m_1)
+      \\f_2(x) \equiv 0(mod\ m_2)
+      \\ \cdots
+      \\f_s(x) \equiv (mod\ m_s)
+    \end{matrix}
+    \right.
+  \]
+  对于模$M = m_1m_2 \cdots m_s$有$C_1C_2 \cdots C_s$个解。
+\end{theorem}
+\begin{proof}
+  \begin{itemize}
+    \item 构造所有解
+          \\设$f_i(x) \equiv 0(mod\ m_i)$的$C_i$个解为$x \equiv b_{i,1},\ b_{i,2},\ \cdots ,\ b_{i,C_i}(mod\ m_i)$，将这些解进行组合得到形式为
+          \begin{equation*}
+           x \equiv \sum_{i=1}^{s}b_i \cdot \frac{M}{m_i}(\frac{M}{m_i})^{-1}(mod\ m_i)(mod\ M)
+          \end{equation*}
+        的解，其中，$b_i$遍历$b_{i,1},\ b_{i,2},\ \cdots ,\ b_{i,C_i}$，解的个数为$C_1C_2 \cdots C_s$。
+    \item 两两互不同余\\
+    下面我们证明这些解关于模M是两两互不同余的。\\
+    若$x^{\prime} \equiv  \sum_{i=1}^s b_i^{\prime} \cdot \frac{M}{m_i}(\frac{M}{m_i})^{-1}(mod\ m_i)(mod M)$是其中的一个解，且$x^{\prime} \equiv x(mod\ M)$，根据定理2.2，
+    $
+      \left\{
+        \begin{matrix}
+          x \equiv x^{\prime}(mod\ m_1)
+          \\ x\equiv x^{\prime}(mod\ m_2)
+          \\ \cdots
+          \\x \equiv x^{\prime}(mod\ m_s)
+        \end{matrix}
+      \right.
+    $
+    ，可以得到
+    $
+     \left\{
+       \begin{matrix}
+         b_1 \equiv b_1^{\prime}(mod\ m_1)
+         \\b_2 \equiv b_2^{\prime}(mod\ m_2)
+         \\ \cdots
+         \\b_s \equiv b_s^{\prime}(mod\ m_s)
+       \end{matrix}
+     \right.
+    $
+    说明，只要$b_i$中的任意一个发生变化，得到的解都是不同的。
+  \end{itemize}
+\end{proof}
+\subsection{模同一素数幂}
+\begin{theorem}
+  设p为素数，$i_1 \geq i_2 \geq \cdots \geq i_s,\ b_1,\ b_2,\ \cdots ,\ b_s$为任意整数，那么同余式组
+  \[
+    \left\{
+      \begin{matrix}
+        x \equiv b_1(mod\ p^{i_1})
+        \\ x \equiv b_2(mod\ p^{i_2})
+        \\ \cdots
+        \\ x \equiv b_s(mod\ p^{i_s})
+      \end{matrix}
+    \right.
+  \]
+  有解的充要条件是
+  \[\left\{
+    \begin{matrix}
+      b_1 \equiv b_2(mod\ p^{i_2})
+    \\b_1 \equiv b_3(mod\ p^{i_3})
+    \\ \cdots
+    \\ b_1 \equiv b_s(mod\ p^{i_s})
+    \end{matrix}
+  \right.\]
+  如果有解，其解为$x \equiv b_1(mod\ p^{i_1})$。
+\end{theorem}
+\begin{example}
+  试判断同余式组$\begin{cases}
+    x \equiv 9(mod\ 15)
+    \\ x \equiv 49(mod\ 50)
+    \\x \equiv -41(mod\ 140)
+  \end{cases}$
+  是否有解，如果有解，求出其解。
+\end{example}
+\begin{solution}
+  \\ 原同余式可以等价变形为$\begin{cases}
+    x \equiv 9(mod\ 3)
+    \\x \equiv 9(mod\ 5)
+    \\x \equiv 49(mod\ 5^2)
+    \\x \equiv 49(mod\ 2)
+    \\x \equiv -41(mod\ 7)
+    \\x \equiv -41(mod\ 2^2)
+    \\x \equiv -41(mod\ 5)
+  \end{cases}$
+  \\ $49 \equiv 9 \equiv -41(mod\ 5),\ -41 \equiv 49(mod\ 2)$有解
+  \\ 可以等价地变形为
+  \\$\begin{cases}
+    x \equiv 9(mod\ 3)
+    \\ x \equiv 49(mod\ 5^2)
+    \\ x \equiv -41(mod\ 7)
+    \\ x \equiv -41(mod\ 2^2)
+  \end{cases}$
+  ，进一步化简为$\begin{cases}
+    x \equiv 0(mod\ 3)
+    \\x \equiv -1(mod\ 5^2)
+    \\x \equiv 1(mod\ 7)
+    \\x \equiv 3(mod\ 2^2)
+  \end{cases}$
+  最后求得$x \equiv 99(mod\ 2100)$(用CRT)。
+\end{solution}
+\subsection{一般同余式求解}
+对于合数$m = \prod_{i=1}^sp_i^{\alpha_i}$，求同余式$f(x) \equiv 0(mod\ m)$的解等价于求同余式组
+\[\left\{
+  \begin{matrix}
+    f(x) \equiv 0(mod\ p_1^{\alpha_1})
+    \\f(x) \equiv 0(mod\ p_2^{\alpha_2})
+    \\ \cdots
+    \\f(x) \equiv 0(mod\ p_s^{\alpha_s})
+  \end{matrix}
+\right.\]
+的解。
+\vskip 0.5cm
+\begin{exercise}
+  \begin{itemize}
+    \item 试证明同余式组$\begin{cases}
+    x \equiv a(mod\ m)
+    \\x \equiv b(mod\ n)
+    \end{cases}$
+    有解的充要条件是$(m,n) \mid a-b$
+    \item 求解同余式组$\begin{cases}
+      x^2 \equiv 1(mod\ 7)
+      \\4x \equiv 4(mod\ 6)
+      \\x \equiv 4(mod\ 9)
+    \end{cases}$
+  \end{itemize}
+\end{exercise}
+\section{模为素数幂的高层同余式}
+\begin{definition}
+  设$f(x) = a_nx^n+a_{n-1}x^{n-1}+ \cdots +a_1x+a_0$是一个正系数多项式，其一阶导式$f^{\prime}(x) = na_mx^{n-1}+(n-1)a_{n-1}x^{n-2}+ \cdots +a_1$。$f(x)$的一阶导式也可以记为$f^{(1)}(x)$，依次地，定义其m阶导式为$f^{(m)}(x) = (f^{(m-1)}(x))^{\prime}$。
+\end{definition}
+\begin{theorem}[构造所有解]
+  设p为素数，$k \geq 1$，那么$x \equiv x_k(mod\ p^k)$是同余式
+  $f(x) \equiv (mod\ p^k)$的一个解，那么在这个剩余类中，
+  \begin{itemize}
+    \item 若$(p,f^{\prime}(x_k)) = 1$，同余式$f(x) \equiv 0(mod\ p^{k+1})$有唯一解。
+    \item 若$p \mid f^{\prime}(x_k)$，当$f(x_k) \not\equiv 0(mod\ p^{k+1})$时，同余式$f(x) \equiv 0(mod\ p^{k+1})$无解；当$f(x_k) \equiv 0(mod\ p^{k+1})$时，同余式$f(x) \equiv 0(mod\ p^{k+1})$有p个解
+  \end{itemize}
+\end{theorem}
+\begin{proof}
+  \begin{itemize}
+    \item 根据定理2.2，同余式$f(x) \equiv 0(mod\ p^{k+1})$的解一定满足$f(x) \equiv 0(mod\ p^k)$所以$f(x) \equiv 0(mod\ p^{k+1})$的解可以从$f(x) \equiv 0(mod\ p^k)$𝑓(𝑥) ≡ 0的解中进行筛选而得。
+    \item 因为$x \equiv x_k(mod\ p^k)$是同余式$f(x) \equiv 0(mod\ p^k)$的一个解，我们将从
+    \begin{equation*}
+      x = x_k+p^kt, t \in Z
+    \end{equation*}
+    这个剩余类中筛选出$f(x) \equiv 0(mod\ p^{k+1})$的解。
+  \end{itemize}
+  将$x = x_k+p^kt$代入$f(x) \equiv 0(mod\ p^{k+1})$，有$f(x_k+p^kt) \equiv 0(mod\ p^{k+1})$，用泰勒公式展开得到
+  \begin{equation*}
+    f(x_k)+f^{\prime}(x_k)p^kt+ \sum_{i =2}^{n} \frac{f^{(i)}(x_k)p^{ik}}{i!} t^i \equiv 0(mod\ p^{k+1})
+  \end{equation*}
+  进一步化简可得
+  \begin{equation*}
+    f(x_k)+f^{\prime}(x_k)p^kt \equiv 0(mod\ p^{k+1})
+  \end{equation*}
+  由$f(x_k) \equiv 0(mod\ p^k)$，有$p^k \mid f(x_k)$，所以上式可以进一步化简为
+  \begin{equation*}
+    f^{\prime}(x_k)t \equiv - \frac{f(x_k)}{p^k}(mod\ p)
+  \end{equation*}
+  \begin{enumerate}[(1)]
+    \item 若$(f^{\prime}(x_k),\ p) =1$，上式有唯一解$t \equiv - \frac{f(x_k)}{p^k}(f^{\prime}(x_k))^{-1}(mod\ p)$，从而筛得$f(x) \equiv 0 (mod\ p^{k+1})$的解为
+    \begin{align*}
+      x & \equiv x_0 - \frac{f(x_k)}{p^k}((f^{\prime}(x_k))^{-1}(mod\ p))p^k
+      \\& \equiv x_k - f(x_k)((f^{\prime})^{-1}(mod\ p))(mod\ p^{k+1})
+    \end{align*}
+    \item  若$p \mid f^{\prime}(x_k)$，当$f(x_k) \not\equiv 0(mod\ p^{k+1})$时，上式无解；
+    \\当$f(x_k) \equiv 0(mod\ p^{k+1})$时，上式有$p$个解，也就是说$x = x_k+p^kt,\ t \in Z,\ x \equiv x_k+p^kt(mod\ p^{k+1}), t =0,\ 1,\ \cdots ,\ p-1$。
+  \end{enumerate}
+\end{proof}
+\vskip 0.5cm
+\begin{conclusion}
+  设p为素数，若$x \equiv x_1(mod\ p)$是同余式$f(x) \equiv 0(mod\ p)$的一个解，且满足$(f^{\prime}(x_1),\ p) = 1$，那么对于任意正整数$k>1,\ f(x) \equiv 0(mod\ p^k)$的满足$x \equiv x_1(mod\ p)$的解$x_k$可以通过如下递推公式得到：
+  \begin{equation*}
+    x_i \equiv x_{i-1}-f(x_{i-1})((f^{\prime})^{-1}(mod\ p))\ (mod\ p^i),\quad i = 2,\ 3,\ \cdots ,\ k
+  \end{equation*}
+\end{conclusion}
+\begin{proof}
+  \\利用数学归纳法可以证明。
+\end{proof}
+\section{高次同余式求解方法}
+\subsection{唯一解}
+\begin{example}
+  试求同余式$x^3+4x^2+1 \equiv 0(mod\ 3^5)$的解
+\end{example}
+\begin{solution}
+  \\令$f(x) = x^3+4x^2+1$，则$f^{\prime}(x) = 3x^2+8x \equiv 2x(mod\ 3)$
+  \\由同余式$f(x) \equiv 3(mod\ 3)$得到解$x_1 \equiv (mod\ 3)$
+  \\所以，$(f^{\prime}(x_1))^{-1} \equiv 2^{-1} \equiv 2(mod\ 3)$
+  \\根据定理的推论有
+  \begin{align*}
+    x_2 &\equiv x_1-2f(x_1) \equiv 7(mod\ 3^2)
+    \\x_3 &\equiv x_2-2f(x_2) \equiv 7(mod\ 3^3)
+    \\x_4 &\equiv x_3-2f(x_3) \equiv 61(mod\ 3^4)
+    \\x_5 &\equiv x_4-2f(x_4) \equiv 142(mod\ 3^5)
+  \end{align*}
+  所以，原同余式的解为$x \equiv 142(mod\ 3^5)$
+\end{solution}
+\subsection{无解}
+\begin{example}
+  试求同余式$x^2+p \equiv 0(mod\ p^3)$，其中$p$为奇素数。
+\end{example}
+\begin{solution}
+  \\令$f(x) = x^2+p$，则$f^{\prime}(x) \equiv 2x(mod\ p)$
+  \\ 考虑$f(x) \equiv 0(mod\ p)$，它的唯一解为$x_1 \equiv 0(mod\ p)$
+  \\$f^{\prime}(x_1) \equiv 0(mod\ p)$，所以$p \mid f^{\prime}(x_1)$
+  \\因为$f(x_1) = p$，所以$p^2 \not\mid f(x_1)$，根据定理，同余式$x^2+p \equiv 0(mod\ p^2)$无解，原同余式也一定无解。
+\end{solution}
+\subsection{多个解}
+\begin{example}
+  试求解同余式$x^2-p^2 \equiv 0(mod\ p^3)$，其中$p$为奇素数。
+\end{example}
+\begin{solution}
+  \\令$f(x)=x^2-p^2$，则$f^{\prime}(x) \equiv 2x(mod\ p)$
+  \\考虑$f(x) \equiv 0(mod\ p)$，它有唯一解$x_1 \equiv 0(mod\ p)$
+  \\$f^{\prime}(x_1)(mod\ p)$，所以$p \mid f^{\prime}(x_1)$
+  \\$f(x_1) = -p^2$，所以$p^2 \mid f(x_1)$，根据定理，同余式$x^2-p^2 \equiv 0(mod\ p^2)$有p个解,$x_2 = 0,\ p,\ 2p,\ \cdots ,\ (p-1)p(mod\ p^2)$
+  \\$f(x_2) = (ip)^2 - p^2 = (i^2-1)p^2$，仅当$i=1,\ -1$时，$p^3 \mid f(x_2)$，所以，同余式$x^2-p^2 \equiv 0(mod\ p^3)$的解为：$x_3 \equiv \pm p,\ p^2 \pm p,\ 2p^2 \pm p,\ \cdots \ (p-1)p^2 \pm p(mod\ p^3)$
+\end{solution}
+\subsection{复杂情况}
+\begin{itemize}
+  \item 转化为素数幂(简化模)
+  \\对于合数$m = \prod_{i=1}^s p_i^{\alpha_i}$，求同余式$f(x) \equiv 0(mod\ m)$的解等价于求同余式组
+  \[
+      \left\{
+        \begin{matrix}
+          f(x) \equiv 0(mod\ p_1^{\alpha_1})
+          \\f(x) \equiv 0(mod\ p_2^{\alpha_2})
+          \\ \cdots
+          \\f(x) \equiv 0(mod\ p_s^{\alpha_s})
+        \end{matrix}
+      \right. 
+  \]
+  的解
+  \vskip 0.5cm
+  \item 扩展欧拉定理之结论(降次)
+  \\设p为素数，a为任意整数，那么，对于任意$k \geq 0,\ t \geq \beta$，均有$a^{k\varphi(p^{\beta})+t} \equiv a^t(mod\ p^{\beta})$。
+\end{itemize}
+\vskip 0.5cm
+\begin{example}
+  求解同余式$x^254+2x^3 \equiv 0(mod\ 135)$
+\end{example}
+\begin{solution}
+  \\ \[
+    \begin{cases}
+      x^2+2x^3 \equiv 0(mod\ 5) \Leftrightarrow x^2(1+2x) \equiv 0(mod\ 5) \Rightarrow x \equiv 0,\ 2 (mod\ 5)
+      \\x^{254}+2x^3 \equiv 0(mod\ 27) \Leftrightarrow x^{20}+2x^3 \equiv 0(mod\ 27)
+    \end{cases}
+  \]
+  令$f(x) = x^{20}+2x^3$，则$f(x) \equiv 0(mod\ 3)$得解$x_1 \equiv 0,1(mod\ 3)$
+  \\$f^{\prime}(x) \equiv 2x(mod\ 3),\ f^{\prime}(1) \equiv 2(mod\ 3),\ {f^{\prime}(1)}^{-1} \equiv 2(mod\ 3)$，由$x_1 \equiv 1(mod\ 3)$，所以
+  \\ $x_2 \equiv 1-2*f(1)(mod\ 9) \equiv 4(mod\ 9)$
+  \\ $x_3 \equiv 4-3*f(4)(mod\ 27) \equiv 4-2(4^2+2*4^3) \equiv 13(mod\ 27)$
+  \\ 由$x_1 \equiv 0(mod\ 3)$，由于$3t +x_1$均满足$x^{254}+2x^3 \equiv 0(mod\ 27)$，所以$x_3 \equiv 0,3,6,9, \cdots , 24(mod\ 27)$
+  \\综上得到
+  \[
+    \begin{cases}
+      x \equiv a \equiv 0(mod\ 5)
+      \\ x \equiv b \equiv 0,3,6,9,12,13,15,18,21,24(mod\ 27)
+    \end{cases}\]
+    综上所述，根据中国剩余定理，所有解为：
+    \\$x \equiv a \cdot 27 \cdot ((27)^{-1}(mod\ 5)) + b \cdot 5 \cdot 11(mod\ 135)$
+    \\$x \equiv 0,30,60,90,120,40,15,45,75,\cdots$
+\end{solution}
+\begin{problemset}
+  \item 试证明：如果$r_1,\ r_2,\ \cdots ,\ r_{\varphi(m)}$是模$m(m>2)$的一个简化剩余系，那么$\sum_{i=1}^{\varphi(m)}r_i \equiv 0(mod\ m)$。
+  %\begin{proof}
+   % \\ 对于任意$r_i$，我们考虑剩余类$-r_i(mod\ m)$
+    %\\ $(1)(-r_i,m) = (r_i,m) = 1$，简化剩余类
+    %\\ $(2)r_i \not\equiv -r_i(mod\ m)$，否则，$2r_i \equiv 0(mod\ m)$
+  %\end{proof}
+  \item 试证明：如果n是正奇数，那么$\sum_{i=1}^{n-1}i^3 \equiv 0(mod\ n)$。
+  \item 试判断128749832749837759345是否是11和13的倍数。
+  \item 试计算$13^{20170226}(mod\ 72)$。
+  \item 试证明：若$N = \prod_{i=1}^n p_i^{\alpha_i},\ (a,\ N) = 1$，那么
+  \begin{equation*}
+    a^{[\varphi(p_1^{\alpha_1}),\varphi(p_2^{\alpha_2}),\cdots,\varphi(p_n^{\alpha_n})]} \equiv 1(mod\ N)
+  \end{equation*}
+  \item 试证明：正整数$N>1$满足$\varphi(N) =2^n$的充要条件是N有分解式$N=2^m\prod_{i=1}^SF_i,\ m\geq 0,\ F_i$为互不相等的Fermat素数。
+  \item RSA加密算法。设$N = pq,\ p,\ q $为不相等的素数，正整数e满足$(e,\varphi(N)) = 1$，d满足$ed \equiv 1(mod\ \varphi(N))$，试证明：对于任意明文$0 \leq m <N$，若加密算法为$c \equiv m^e(mod\ N)$，那么由密文c，可以通过计算$c^d(mod\ N)$解密得到明文m。
+  \item 试证明：正整数$N>1$对于任意整数$0 \leq a <N$和$k>0$均有$a^{k\varphi(N)+1} \equiv a(mod\ N)$的充要条件是N有分解式$N = \prod_{i=1}^np_i$，$p_i$为互不相等的素数。
+  \item 设模$m$的简化剩余系为$r_1,\ r_2,\ \cdots,\ r_{\varphi(m)}$，试证明：$(\prod_{i=1}^{\varphi(m)})^2 \equiv 1(mod\ m)$。
+  \item 试求解一次同余式$256x \equiv 28(mod\ 400)$。
+  \item 如果p是素数，且$p \equiv 1(mod\ 4)$，那么同余式$x^2 \equiv -1(mod\ p)$有两个不同余的解
+  \begin{equation*}
+    x \equiv \pm \frac{p-1}{2}!(mod\ p)
+  \end{equation*}
+  \item 试计算$3^{20100416}(mod\ 35),\ 3^{20150410}(mod\ 35 \times 27)$。
+  \item 试证明：如果$(a,32760) = 1$，那么$a^{12} \equiv 1(mod\ 32760)$
+  \item 求解同余式$x^{10}+x^2+x+1 \equiv 0(mod\ 2^5)$。
+  \item 求解同余式$x^2+px \equiv 0(mod\ p^3)$，其中p为奇素数。
+\end{problemset}
+\chapter{域}
+\section{域的定义与性质}
+\subsection{域的定义}
+\begin{definition}
+  设$\mathbb{F}$是一个非空集合，对其上的定义了两种运算，分别叫做加法和乘法，记作$"+"," \cdot "$，对于$\mathbb{F}$中的任意两个元素$a,b,$均有$a+b \in \mathbb{F},\ a \cdot b \in \mathbb{F}$($\mathbb{F}$对于加法和乘法自封闭，$a+b,\ a \cdot b$分别称为两个元素的和与积，$a \cdot b$通常记作$ab$)，我们称$\mathbb{F}$对于所规定的加法和乘法成为一个域，如果其元素满足以下运算规则：
+  \begin{itemize}
+    \item $\mathbb{F}$中所有元素对于加法形成一个加法交换群;
+    \item $\mathbb{F}$中所有非零元素($\mathbb{F}^{*}$)对于乘法形成一个乘法交换群;
+    \item 对于任意$a,\ b,\ c \in \mathbb{F},\ a(b+c) = ab + ac$(乘法对加法的分配律).
+  \end{itemize}
+\end{definition}
+\vskip 0.5cm
+\textbf{一个域至少有两个元素，即\textcolor{pink}{加法群的零元}和\textcolor{pink}{乘法群的单位元}，他们分别
+称为域的零元和单位元，记作0和1，单位元有时也记作𝑒。 当称一个集合
+是域的时候，除了需要指明集合本身的元素外，还要指明集合上定义的加
+法和乘法。}
+\vskip 0.5cm
+\textbf{当域的元素个数有限时称为\textcolor{pink}{有限域}，或者\textcolor{pink}{伽罗华域}，否则称为\textcolor{pink}{无限域}。
+常见的有理数集合$\mathbb{Q}$，实数集合$\mathbb{R}$和复数集合$\mathbb{C}$按照其上定义的加法和乘
+法都形成域，分别叫做有理数域，实数域和复数域。
+}
+\vskip 0.5cm
+\begin{example}
+  以下集合按照定义的加法和乘法均不形成域：
+  \begin{enumerate}[(1)]
+    \item 全体整数形成的集合$\mathbb{Z}$，加法和乘法分别为$\mathbb{Z}$上的加法和乘法;
+    \item 集合$\{a+b \sqrt[3]{2} \mid a,\ b \in \mathbb{Q}\}$，加法和乘法分别为实数域$\mathbb{R}$上的加法和乘法;
+    \\ \textcolor{pink}{但是 $a+b \sqrt[3]{2} + c \sqrt[3]{4}$是一个域;}
+    \item $\mathbb{Z}_{m} = \{0,\ 1,\ \cdots ,\ m-1 \}$，m为合数，加法和乘法分别为模m的加法和乘法。
+  \end{enumerate}
+\end{example}
+\begin{theorem}
+  设$\mathbb{F}$是一个域，那么
+  \begin{enumerate}[(1)]
+    \item 对于任意$a \in \mathbb{F},\ 0a = a0 = 0$。
+    \item 任意$a,\ b \in \mathbb{F},\ if \ ab =0,\ \Rightarrow a = 0 \ or \ b = 0$。
+  \end{enumerate}
+\end{theorem}
+\subsection{子域和扩域}
+\begin{definition}
+  设$\mathbb{F}$是一个域，$\mathbb{F}_0$是$\mathbb{F}$的非空子集，如果对于$\mathbb{F}$上的加法和乘法，$\mathbb{F}_0$也是一个域，则称$\mathbb{F}_0$是$\mathbb{F}$的子域，$\mathbb{F}$是$\mathbb{F}_0$的扩域，记作$\mathbb{F}_0 \subset \mathbb{F}$。
+\end{definition}
+\textbf{例如：$\mathbb{Q} \subset \mathbb{Q}[\sqrt{2}] \subset \mathbb{R} \subset \mathbb{R}[\sqrt{-2}] \subset \mathbb{C}$。}
+\subsection*{判断方法}
+\begin{theorem}
+  设$\mathbb{F}_0,\ \mathbb{F}_0^{*}$均是域$\mathbb{F}$的非空子集，当且仅当以下条件成立时$\mathbb{F}_0$是域$\mathbb{F}$的子域：
+  \begin{enumerate}[(1)]
+    \item 任意$a,\ b \in \mathbb{F}_0$，都有$-a,\ a+b \in \mathbb{F}_0$;
+    \item 任意非零元素$a,\ b \in \mathbb{F}_0$，都有$a^{-1},\ ab \in \mathbb{F}_0$。
+  \end{enumerate}
+\end{theorem}
+\begin{proof}
+  \begin{enumerate}[(1)]
+    \item 说明$\mathbb{F}_0$是$\mathbb{F}$的加法子群
+    \item 说明$\mathbb{F}_0^{*}$是$\mathbb{F}^{*}$的乘法子群。\\ 而乘法对加法的分配律在$\mathbb{F}$中成立，那么在$\mathbb{F}_0$中也必然成立，根据定义$\mathbb{F}_0$是一个域。
+  \end{enumerate}
+\end{proof}
+\begin{example}
+  \begin{enumerate}[(1)]
+    \item $\mathbb{Q}[\sqrt{2}]=\{a+b \sqrt{2} \mid a,\ b \in \mathbb{Q} \}$，加法和乘法分别为实数域$\mathbb{R}$上的加法和乘法;
+    \item $\mathbb{Z}_p = \{0,1, \cdots , p-1 \}$，p为素数，加法和乘法分别为模p的加法和乘法;
+  \end{enumerate}
+\end{example}
+\section{域的特征}
+\subsection{特征的定义}
+\begin{definition}
+  设$\mathbb{F}$是一个域，如果存在正整数m，使得对于任意$a \in \mathbb{F}$均有$ma = 0$，则在所有$m$中，最小的正整数称为\textcolor{blue}{域$\mathbb{F}$的特征}；否则，如果不存在正整数m，使得对于任意$a \in \mathbb{F}$均有$ma =0$，则称域$\mathbb{F}$的\textcolor{blue}{特征为0}。域$\mathbb{F}$的特征记作$char(\mathbb{F})$。
+\end{definition}
+\subsection{域的同构}
+\begin{definition}
+  设$\mathbb{F},\ \mathbb{K}$是两个域，如果存在$\mathbb{F}$到$\mathbb{K}$上的一一映射$\delta$，使得对于任意$a,\ b \in \mathbb{F}$，均有
+  \begin{equation*}
+    \delta (a+b) = \delta (a)+\delta (b),\ \delta (ab) = \delta (a)\delta (b)
+  \end{equation*} 
+  则称$\delta $为$\mathbb{F}$到$\mathbb{K}$上的\textcolor{blue}{同构映射}，此时称域$\mathbb{F},\ \mathbb{K}$同构，记作$\mathbb{F} \cong \mathbb{K}$。如果$\mathbb{F}=\mathbb{K}$，则称$\delta $为\textcolor{blue}{自同构映射}，特别地，若进一步对于任意$a \in \mathbb{F}$均有$\delta (a) = a$，则称$\delta $为\textcolor{blue}{恒等自同构映射}。
+\end{definition}
+\subsection{素域} 
+\textbf{一个域的最小子域称为该域的素域}
+\begin{theorem}
+  设$\mathbb{F}$是一个域，如果$char(\mathbb{F})$为正整数，则必为某个素数$p$。特征为素数$p$的域的素域与$\mathbb{Z}_p$同构，特征为0的域的素域与$\mathbb{Q}$同构。
+\end{theorem}
+\begin{proof}
+  反证法。假设$char(\mathbb{F}) = m >0$，m为合数。设p是m的最小素因子，$m = ps,\ 1 < p<m,\ 1<s<m$，则$(ps)e = me = 0$，而$(ps)e = (pe)(se)$，根据定理3.1，$pe = 0$或者$se = 0$。但是对于任意$a \in \mathbb{F},\ pa = (pe)a,\ sa = (se)a$，所以必有$pa = 0$或者$sa = 0$，这与$m$的最小性相矛盾。
+  \\
+  当$char(\mathbb{F})=p$时，可以验证$\mathbb{F}_0=\{0,\ e,\ 2e,\ ,\cdots ,\ (p-1)e \}$是域$\mathbb{F}$的最小子域，而映射$\delta: \mathbb{F}_0 \rightarrow \mathbb{Z}_p,\ \delta(ie) = i$为域同构映射。
+  \\
+  当$char(\mathbb{F}) = 0$时，可以验证$\mathbb{F}_0 = \{(ae)(be)^{-1} \mid a,b \in Z,b \neq 0\}$是域$\mathbb{F}$的最小子域，而映射$\delta: \mathbb{F}_0 \rightarrow \mathbb{Q},\ \delta((ae)(be)^{-1})=\frac{a}{b} \in \mathbb{Z},\ b \neq 0$为域同构映射。
+\end{proof}
+\begin{exercise}
+  试证明对于任何非负整数n，在特征为p的有限域$\mathbb{F}$上定义的映射$\delta_n:\mathbb{F} \rightarrow \mathbb{F},\ \delta_n(\alpha)=\alpha^{p^n}$均是$\mathbb{F}$的自同构。
+\end{exercise}
+\section{二项式定理}
+\subsection{二项式定理}
+\begin{theorem}[二项式定理]
+  设$\mathbb{F}$是一个域，$a,\ b \in \mathbb{F}$，则对于任意正整数n，$(a+b)^n = \sum_{i=0}^{n} \binom{n}{i}a^{n-i}b^i$
+\end{theorem}
+\subsection{特征幂的二项式定理}
+\begin{theorem}
+  设$\mathbb{F}$是一个域，$char(\mathbb{F})=p$，则对于任意$a,\ b \in \mathbb{F},\ n \geq 0$，均有
+  \begin{equation*}
+    (a \pm b)^{p^n} = a^{p^n} \pm b^{p^n}
+  \end{equation*}
+\end{theorem}
+\begin{proof}
+  $n = 0$时结论成立。\\
+  下面对$n>0$使用数学归纳法证明$(a+b)^{p^n} = a^{p^n}+b^{p^n}$。\\
+  $n =1$ 时，因为$p \mid \binom{p}{i}(0<i<p)$，根据二项式定理，$(a+b)^p = a^p +b^p$。\\
+  假设$n = k$时结论成立，当$n = k+1$时,
+  \begin{align*}
+    (a+b)^{p^{k+1}}=((a+b)^{p^k})^p = (a^{p^k}+b^{p^k})^p = a^{p^{k+1}}+b^{p^{k+1}},
+    \\ (a-b)^{p^n} = (a+(-b))^{p^n} = a^{p^n}+(-1)^{p^n}b^{p^n},
+  \end{align*}
+  当$p \neq 2$时，$(-1)^{p^n} = -1$，所以，$(a-b)^{p^n} = a^{p^n} - b^{p^n}$;
+  \\当$p = 2$时，$(-1)^{p^n} = 1 = -1$，仍有$(a-b)^{p^n} = a^{p^n}-b^{p^n}$。
+\end{proof}
+\subsection{域上的多项式}
+\begin{definition}
+  对于非负整数$i,\ a_ix^i,\ a_i \in \mathbb{F}$表示域$\mathbb{F}$上文字为$x$的\textcolor{blue}{单项式}，我门称形式和$f(x)=a_nx^n+a_{n-1}x^{n-1}+ \cdots + a_1x^1 + a_0x^0,\ a_i \in \mathbb{F}$为域$\mathbb{F}$上的文字为$x$的多项式，简称为域$\mathbb{F}$上的多项式。
+\end{definition}
+\subsection{多项式的加法和乘法}
+在$\mathbb{F}$上可以定义加法"+"和乘法"$\cdot$"，
+设$f(x)= \sum_{i=0}^na_ix^i,\ g(x)= \sum_{i=0}^mb_ix^i,n \geq m,\ b_{m+1}= b_{m+2}=\cdots =b_n=0$，则可定义
+\begin{align*}
+  f(x)+g(x)=\sum_{i=0}^n(a_i+b_i)x_i,
+  \\
+  f(x) \cdot g(x)= \sum_{j=0}^{m+n}(\sum_{i=0}^ja_ib_{j-i})x^j
+\end{align*}
+关于多项式的次数，下面结论成立：
+\begin{align*}
+  deg(f(x)+g(x)) \leq max\{degf(x),\ degg(x)\}\\
+  deg(f(x)g(x))=degf(x)+degg(x)
+\end{align*}
+$\mathbb{F}[x]$按照上面的定义的加法和乘法\textbf{不是域}，因为除了$\mathbb{F}$中的非零元素，$\mathbb{F}[x]$中的其他元素均没有逆元。
+\vskip 0.5cm
+$f(x),\ g(x)$是特征为p的域上的多项式，那么
+\begin{equation*}
+  (f(x) \pm g(x))^{p^n}=f(x)^{p^n} \pm g(x)^{p^n}
+\end{equation*}
+\vskip 0.5cm
+\textbf{$\mathbb{F}(x)=\{\frac{f(x)}{g(x)} \mid f(x),g(x) \in \mathbb{F}[x],\ g(x) \neq 0 \}$
+按照以下运算规则形成一个域，其中$\frac{f(x)}{g(x)}+\frac{s(x)}{t(x)}=\frac{f(x)t(x)+s(x)g(x)}{g(x)t(x)},\\ \frac{f(x)}{g(x)} \frac{s(x)}{t(x)}=\frac{f(x)s(x)}{g(x)t(x)}$，
+且$\frac{f(x)}{g(x)}=\frac{f_1(x)}{g_1(x)}$当且仅当$f(x)g_1(x)= g(x)f_1(x)$。特别地，当$\mathbb{F}$是特征为p的有限域时，$\mathbb{F}(x)$是特征为p的无限域。}
+\section{多项式的辗转相除法}
+\subsection{带余除法算式}
+\begin{theorem}
+  设$f(x),g(x)$为域$\mathbb{F}$上的两个多项式，$g(x) \neq 0$，则存在唯一的一对多项式$q(x), \ r(x)$，使得：
+  \begin{equation*}
+    f(x)=q(x)g(x)+r(x),\quad deg\ r(x) < deg\ g(x)
+  \end{equation*}
+  $r(x)$称为$f(x)$被$g(x)$除所得的\textbf{余式}，记作$(f(x))_{g(x)} = r(x)$。
+\end{theorem}
+\begin{proof}
+  设$f(x)=a_nx^n+\cdots + a_1x +a_0,\ g(x)=b_mx^m+\cdots + b_1x+b_0$。
+  \begin{itemize}
+    \item \textcolor{pink}{归纳基础}\quad 当$n<m$时，取$q(x)=0,\ r(x)=f(x)$，结论成立。
+    \item \textcolor{pink}{归纳假设}\quad 假设当$n<k(k \geq m)$时结论均成立。
+  \end{itemize}
+\end{proof}
+\begin{theorem}
+  设$f_1(x),\ f_2(x),\ g(x)$为域$\mathbb{F}$上的多项式，$g(x) \neq 0$，则
+  \begin{align*}
+    (f_1(x)+f_2(x))_{g(x)} = (f_1(x))_{g(x)}+(f_2(x))_{g(x)}\\
+    (f_1(x)f_2(x))_{g(x)} = ((f_1(x))_{g(x)}(f_2(x))_{g(x)})_{g(x)}
+  \end{align*}
+\end{theorem}
+\begin{proof}
+  \begin{align*}
+    (f_1(x)+f_2(x))_{g(x)}&=(q_1(x)g(x)+(f_1(x))_{g(x)}+q_2(x)g(x)+(f_2(x)_g(x)))_{g(x)}\\
+    &=((q_1(x)+q_2(x))g(x)+(f_1(x))_{g(x)}+(f_2(x))_{g(x)})_{g(x)}\\
+    &=(f_1(x))_{g(x)}+(f_2(x))_{g(x)}
+    \\ \\
+    (f_1(x)f_2(x))_{g(x)}&=((q_1(x)q_2(x)g(x)+q_1(x)(f_2(x))_{g(x)}+q_2(x)(f_1(x))_{g(x)})g(x)+(f_1(x))_{g(x)}(f_2(x))_{g(x)})_{g(x)}\\
+    &=((f_1(x))_{g(x)}(f_2(x))_{g(x)})_g(x)
+  \end{align*}
+\end{proof}
+\vskip 0.5cm
+\textbf{该定理可推广到多个多项式相加和相乘的情况。我们将以上运算分
+别叫做多项式$f_1(x),\ f_2(x)$对$g(x)$的模加和模乘运算。}
+\subsection{因式与倍式}
+\begin{definition}
+  设$f(x)$为域$\mathbb{F}$上的多项式，如果$f(x)$的因式只有$c,\ cf(x)$，其中$c \in \mathbb{F}^{*}$，则$f(x)$称为域$\mathbb{F}$上的\textcolor{blue}{不可约多项式}，否则称为\textcolor{blue}{可约多项式}。
+\end{definition}
+\begin{theorem}
+  域$\mathbb{F}$的多项式$g(x)\mid f_1(x),\ g(x) \mid f_2(x)$，那么对于$\mathbb{F}$上的任意多项式$s(x),t(x)$
+  \begin{equation*}
+    g(x) \mid s(x)f_1(x)+t(x)f_2(x)
+  \end{equation*}
+\end{theorem}
+\begin{example}
+  设$f(x)=x^2+1$，则$f(x)$是实数域$\mathbb{R}$上的不可约多项式，
+  也是域$\mathbb{Z}_3$上的不可约多项式，但$f(x)$是复数域$\mathbb{C}$上的可约多项式，
+  在$\mathbb{C}$上$f(x)=(x+\sqrt{-1})(x-\sqrt{-1}),\ f(x)$也是域$\mathbb{Z}_2$上的可约多项式，
+  在$\mathbb{Z}$上$f(x)=(x+1)^2$。
+\end{example}
+\subsection{辗转相除法}
+\begin{theorem}
+  设$r_0(x),\ r_1(x)$为域$\mathbb{F}$上的两个多项式，$r_1(x) \neq 0$，则可以得如下带余除法算式：
+  \begin{align*}
+    r_0(x) = q_1(x)r_1(x)+r_2(x),&\quad 0 \leq degr_2(x) < degr_1(x)\\
+    r_1(x) = q_2(x)r_2(x)+r_3(x),&\quad 0 \leq degr_3(x) < degr_2(x)\\
+    \cdots & \quad \cdots\\
+    r_{n-2}(x)=q_{n-1}(x)r_{n-1}(x)+r_n(x),&\quad 0 \leq degr_n(x)<degr_{n-1}(x)\\
+    r_{n-1}(x)=q_n(x)r_n(x)+r_{n+1}(x),& \quad r_{n+1}(x) = 0
+  \end{align*}
+  \begin{itemize}
+    \item 经过若干步后，余式必然为0;
+    \item 存在多项式$s(x),\ t(x) \in \mathbb{F}[x]$，使得$s(x)r_0(x)+t(x)r_1(x)=r_n(x)$;
+    \item 设$r_n(x)$首项系数为c，则$(r_0(x),r_1(x))= c^{-1}r_n(x)$，且最高公因式是唯一存在的。
+    \item 对于任意$d(x) \in \mathbb{F}[x]$，若$d(x) \mid r_0(x),\ d(x)\mid r_1(x)$，那么$d(x)\mid (r_0(x),r_1(x))$。
+  \end{itemize}
+\end{theorem}
+\begin{exercise}
+  在$\mathbb{Z}_3$中$f(x)=x^3+x^2+x+1,\ g(x)=2x^4+x^2$试求多项式$s(x),\ t(x)$，使得$s(x)f(x)+t(x)g(x)= gcd(f(x),g(x))$。
+\end{exercise}
+\section{多项式整除和唯一因式分解定理}
+\subsection{多项式整除的性质}
+\begin{theorem}
+  设$f(x),\ g(x)$为域$\mathbb{F}$上两个不全为零的多项式，则对于任意$k(x) \in \mathbb{F}[x],\ (f(x)+g(x)k(x),\ g(x))=(f(x),\ g(x))$。
+\end{theorem}
+\begin{theorem}
+  设$p(x),\ f_1(x),\ f_2(x)$为域$\mathbb{F}$上的多项式，且$p(x) \mid f_1(x)f_2(x)$，若$(p(x),\ f_1(x))=1$，则$p(x) \mid f_2(x)$。
+\end{theorem}
+\begin{theorem}
+  设$p(x),\ f_1(x),\ f_2(x)$为域$\mathbb{F}$上的多项式，$p(x)$为域$\mathbb{F}$上的不可约多项式，且$p(x) \mid f_1(x)f_2(x)$，则$p(x)\mid f_1(x)$或者$p(x) \mid f_2(x)$。
+\end{theorem}
+\subsection{多项式的模逆}
+\begin{conclusion}
+  设$f(x),\ g(x)$为域$\mathbb{F}$上两个次数大于0的多项式，那么，存在唯一的一对多项式$s(x),\ t(x) \in \mathbb{F}[x]$，使得$s(x)f(x)+t(x)g(x)$，且$degs(x)<degg(x)-deg(f(x),g(x)),\ degt(x)<degf(x)-deg(f(x),g(x))$
+\end{conclusion}
+\begin{proof}
+  \begin{align*}
+    s(x)f(x)+t(x)g(X)&=(f(x),g(x))=d(x)
+    \\s(x)\frac{f(x)}{d(x)}+&t(x)\frac{g(x)}{d(x)} = 1
+    \\degs(x)<deg(\frac{g(x)}{d(x)})&=degg(x)-degd(x)
+    \\degf(x)<deg(\frac{f(x)}{d(x)})&=degf(x)-degd(x)
+  \end{align*}
+\end{proof}
+\begin{proof}
+  $u(x)f(x)+v(x)g(x)=1 \Rightarrow degu(x)<degg(x).$
+  \begin{align*}
+    u(x)=q_1(x)g(x)+s(x), degs(x)<degg(x),
+    \\v(x)=q_2(x)f(x)+t(x), degt(x)<degf(x),
+  \end{align*}
+  得到:
+  \begin{equation*}
+    (q_1(x)g(x)+s(x))f(x)+(q_2(x)f(x)+t(x))g(x)=1
+  \end{equation*}
+  所以，$(q_1(x)+q_2(x))f(x)g(x)=1-(s(x)f(x)+t(x)g(x))$
+  \\两边次数做比较,
+  \begin{align*}
+    deg((q_1(x)+q_2(x))f(x)g(x))=deg(q_1(x)+q_2(x))+deg(f(x)g(x))
+    \\deg(1-(s(x)f(x)+t(x)g(x)))<deg((f(x)g(x)))
+  \end{align*}
+  所以，$q_1(x)+q_2(x)=0$，于是
+  \begin{equation*}
+    s(x)f(x)+t(x)g(x)=1
+  \end{equation*}
+  所以得到$degs(x)<degg(x) \Rightarrow degu(x)<degg(x)$。
+\end{proof}
+\subsection{唯一因式分解定理}
+\begin{theorem}
+  设$f(x)$是域$\mathbb{F}$上的次数大于0的多项式，则$f(x)$可以唯一地表示为域$\mathbb{F}$上一些次数大于0的不可约多项式的乘积。特别地，设$f(x)$是首1多项式，且，
+  \begin{equation*}
+    f(x)=p_1(x)p_2(x)\cdots p_s(x)=q_1(x)q_2(x)\cdots q_t(x)
+  \end{equation*}
+  其中$p_1(x),\ p_2(x),\ \cdots ,\ p_s(x),\ q_1(x),\ q_2(x),\ \cdots \ q_t(x)$均为域$\mathbb{F}$上次数大于0的首1不可约多项式，则$s=t$，经过适当的调整可使$p_1(x)=q_1(x),\ p_2(x)= q_2(x),\ \cdots ,\ p_s(x) = q_s(x)$。
+\end{theorem}
+\begin{exercise}
+  $f(x)$是n次多项式，$f(x)$可约的充要条件是存在次数小于或者等于$[\frac{n}{2}]$的首1不可约因式。试判断$f(x)=x^7+x+1 \in \mathbb{Z}_2[x]$是否可约？
+\end{exercise}
+\begin{exercise}
+  试判断$f(x)=x^7+x+1 \in \mathbb{Q}[x]$是否可约？
+\end{exercise}
+\section{扩域的构造}
+\begin{itemize}
+  \item 任何有限域元素的个数为$p^n,\ n \geq 1$，p为素数
+  \item 任意$p^n$的有限域都存在
+  \item 元素个数相同的有限域是同构的
+\end{itemize}
+\subsection{多项式的根}
+\begin{definition}
+  设$f(x)$为域$\mathbb{F}$上的多项式，如果$a \in \mathbb{F}$使得$f(a)=0$，则称$a$为$f(x)$在域$\mathbb{F}$中的一个根。
+\end{definition}
+\begin{theorem}[余元定理]
+  设$f(x)$为域$\mathbb{F}$上的多项式，对于任意$a \in \mathbb{F}$，存在$g(x)\in \mathbb{F}[x]$使得
+  \begin{equation*}
+    f(x)=(x-a)g(x)+f(a)
+  \end{equation*}
+\end{theorem}
+\begin{proof}
+  不妨设$f(x)=(x-a)g(x)+c$，则$f(a)=(a-a)g(a)+c$，所以$c = f(a)$。
+\end{proof}
+\vskip 0.5cm
+\begin{conclusion}
+  设$f(x)$为域$\mathbb{F}$上的多项式，a为$f(x)$在域$\mathbb{F}$中的根的充要条件是$(x-a)\mid f(x)$。
+\end{conclusion}
+\vskip 0.5cm
+\begin{conclusion}
+  设$f(x)$为域$\mathbb{F}$上的$n \geq 1$次多项式，如果$a_1,\ a_2,\ \cdots ,\ a_m$为$f(x)$在域$\mathbb{F}$中的$m \geq 1 $个不同的根，则存在$n-m$次多项式$g(x) \in \mathbb{F}[x]$使得，
+  \begin{equation*}
+    f(x) = (x-a_1)(x-a_2)\cdots(x-a_m)g(x)
+  \end{equation*}
+\end{conclusion}
+\vskip 0.5cm
+\begin{conclusion}
+  设$f(x)$为域$\mathbb{F}$上的$n \geq 1$次多项式，则$f(x)$在$\mathbb{F}$的任意扩域中，不同根的个数都不会超过$n$。
+\end{conclusion}
+\subsection{扩域的构造}
+\begin{theorem}
+  设$f(x)$为域$\mathbb{F}$上的$n \geq 1$次不可约多项式
+\end{theorem}
+\section{有限域的乘法群}
+\subsection{有限域的乘法群}
+\subsection{循环群的结构}
+\begin{theorem}
+  设$<a>$是由$a$生成的$n$阶的循环群，试证明:
+  \begin{enumerate}[(1)]
+    \item $<a>$的子群都是循环群；
+    \item 对于任意正整数$a \mid n,\ <a>$存在唯一的$d$元子群；
+    \item 若整数$s,\ t $不全为$0$，则$<a^s,\ a^t>=<a^{(s,t)}>$。
+  \end{enumerate}
+\end{theorem}
+\begin{proof}
+  \begin{enumerate}[(1)]
+    \item 设G是$<a>$任一子群，如果G是单位元群，结论成立。\\ 否则G由$a^i,\ 0 \leq i < n$中的一部分组成，可设G中a的最小正幂为$a^m$，
+    则根据G中乘法的封闭性，那么$<a^m>$是G的子群，且为循环群。\\
+    下面证明$G = <a^m>$\\
+    对于$\forall a^k \in G,\ k \in \mathbb{Z}$，设$k = qm+r,\ 0 \leq r <m$
+    \begin{align*}
+      &a^r = a^k(a^{-m})^q \in G \Rightarrow r =0 ,
+      \\&m \mid k,\ a^k = a^{mq} \in <a^m>,\ G \subseteq <a^m>.
+    \end{align*}
+    由此说明：$<a>$的子群G是由G中a的最小正幂$a^m$生成的循环群。
+    \item 存在性：对于$d \mid n$，令$m = \frac{n}{d}$，因为$ord(a^m)= \frac{n}{(m,n)} = \frac{n}{m}= d$，所以群$<a^m>$即为$d$阶子群。
+    \\唯一性：设G是$<a>$的任一$d$阶子群，该群中a的最小正幂为$a^m$，由(1)的证明，$G = <a^m>$，又因为$a^n =e \in G$，所以，由(1)，$m \mid n$
+    因此$a^m$的阶为$\frac{n}{m} = d$，所以$m = \frac{n}{d}$。
+    \\由此说明，$<a>$的所有d阶子群均由同一$a^m$生成，它们是唯一的。
+    \item $<a^s,\ a^t>= \{a^{sx+ty}\mid x,\ y \in \mathbb{Z} \}$,
+    \\
+    \end{enumerate}
+\end{proof}
+\begin{example}
+  试求域$\mathbb{Z}_2[x]_{x^6+x+1}$中包含多项式$x^2+x+1$的根的最小子域。
+\end{example}
+\begin{solution}
+  
+\end{solution}
+\chapter{}
+\section{勒让德符号}
+\begin{definition}
+  设𝑚是正整数，若同余式
+  \begin{equation*}
+    x^2 \equiv a(mod\ m),\ (a,m) =1
+  \end{equation*}
+  有解，则a称作模m的二次剩余(或平方剩余)，否则，a称作模𝑚的二次非
+剩余(或平方非剩余)
+\begin{enumerate}
+  \item 模m的同余式可以转化成模p的同余式
+\end{enumerate}
+\end{definition}
+\begin{definition}
+  设𝑝是素数，定义勒让德(Legendre)符号如下:
+\end{definition}
+\begin{example}
+  对于素数 7,因 为 $(±1)^2 \equiv 1， (±2)^2 \equiv 4， (±3)^2 \equiv 2(mod\ 7)$，所以\\
+  \begin{align*}
+    (\frac{1}{7})
+  \end{align*}
+\end{example}
+\subsection{欧拉判别法则}
+设𝑝是素数，求同余式$x^2 \equiv a(mod\ p)$的解可以看成是在有限域$\mathbb{Z}_p$中求多项式$x^2 − a$的根。
+\begin{theorem}[欧拉判别法则]
+设$p$是奇素数，则对于任意整数$a$，$(\frac{a}{p}) \equiv a^{\frac{p-1}{2}}(mod\ p)$。
+
+\end{theorem}
+\end{document}
